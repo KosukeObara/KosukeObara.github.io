@@ -39,6 +39,9 @@ body.nico-hide-shorts-shelf [data-content-type*="shorts" i],
 body.nico-hide-shorts-shelf [data-variant*="reel" i] {
   display: none !important;
 }
+body.nico-hide-shorts-shelf .nico-short-shelf {
+  display: none !important;
+}
 body.nico-hide-aux-shelves
   :is(ytd-shelf-renderer,ytd-horizontal-list-renderer,ytd-rich-section-renderer,
       ytd-horizontal-card-list-renderer,ytd-search-refinements-section-renderer) {
