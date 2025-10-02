@@ -4,6 +4,28 @@ const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 const text  = el => (el?.textContent||"").trim();
 const sleep = (ms)=>new Promise(r=>setTimeout(r,ms));
 
+const CARD_RENDERERS = [
+  'ytd-video-renderer',
+  'ytd-grid-video-renderer',
+  'ytd-rich-item-renderer'
+];
+
+const BODY_FLAG_CLASSES = [
+  ['hideShortsShelf', 'nico-hide-shorts-shelf'],
+  ['hideAuxShelves',  'nico-hide-aux-shelves'],
+  ['hideChannelBlock','nico-hide-channel-block']
+];
+
+const FILTER_ITEMS = [
+  { label: '厳密一致（AND / "フレーズ"）', key: 'strictAnd' },
+  { label: 'ライブのみ', key: 'liveOnly', exclusive: 'liveExclude' },
+  { label: 'ライブ除外', key: 'liveExclude', exclusive: 'liveOnly' },
+  { label: 'Shorts（単体カード）除外', key: 'shortsExclude' },
+  { label: 'ショート棚を隠す', key: 'hideShortsShelf' },
+  { label: 'おすすめ棚を隠す', key: 'hideAuxShelves' },
+  { label: 'チャンネル塊を隠す', key: 'hideChannelBlock' }
+];
+
 function parseTokens(q){
   const out=[]; if(!q) return out;
   const re=/"([^"]+)"|(\S+)/g; let m;
@@ -36,11 +58,11 @@ async function savePrefs(){
 
 // ============== body flags（CSSに反映） ==============
 function applyBodyFlags(){
-  const b = document.body;
-  if (!b) return;
-  b.classList.toggle('nico-hide-shorts-shelf', !!prefs.hideShortsShelf);
-  b.classList.toggle('nico-hide-aux-shelves',  !!prefs.hideAuxShelves);
-  b.classList.toggle('nico-hide-channel-block', !!prefs.hideChannelBlock);
+  const body = document.body;
+  if (!body) return;
+  BODY_FLAG_CLASSES.forEach(([key, className]) => {
+    body.classList.toggle(className, !!prefs[key]);
+  });
 }
 
 // ============== カード絞り込み（非破壊 display:none） ==============
@@ -61,96 +83,111 @@ function titlePlusDesc(card){
   return t + "\n" + d;
 }
 
+function collectCards(){
+  return new Set(
+    CARD_RENDERERS.flatMap(selector => $$(selector))
+  );
+}
+
+function shouldHideCard(card, tokens){
+  if (prefs.shortsExclude && isShortsCard(card)) return true;
+
+  if (prefs.liveOnly || prefs.liveExclude) {
+    const live = isLiveCard(card);
+    if (prefs.liveOnly && !live) return true;
+    if (prefs.liveExclude && live) return true;
+  }
+
+  if (prefs.strictAnd && tokens.length) {
+    const haystack = titlePlusDesc(card);
+    return tokens.some(token => !haystack.includes(token));
+  }
+
+  return false;
+}
+
 function applyCardFilters(){
-  const urlQ = new URL(location.href).searchParams.get("search_query") || "";
-  const tokens = prefs.strictAnd ? parseTokens(urlQ) : [];
+  const urlQuery = new URL(location.href).searchParams.get('search_query') || '';
+  const tokens = prefs.strictAnd ? parseTokens(urlQuery) : [];
 
-  const cards = new Set([
-    ...$$('ytd-video-renderer'),
-    ...$$('ytd-grid-video-renderer'),
-    ...$$('ytd-rich-item-renderer')
-  ]);
-
-  cards.forEach(card=>{
-    let hide = false;
-
-    // Shorts カード除外
-    if (prefs.shortsExclude && isShortsCard(card)) hide = true;
-
-    // ライブのみ／除外
-    if (!hide) {
-      const live = isLiveCard(card);
-      if (prefs.liveOnly && !live) hide = true;
-      if (prefs.liveExclude && live) hide = true;
-    }
-
-    // 厳密一致（タイトル＋説明）
-    if (!hide && prefs.strictAnd && tokens.length){
-      const hay = titlePlusDesc(card);
-      for (const t of tokens){ if (!hay.includes(t)) { hide = true; break; } }
-    }
-
-    card.classList.toggle('nico-hidden', hide);
+  collectCards().forEach(card => {
+    card.classList.toggle('nico-hidden', shouldHideCard(card, tokens));
   });
 }
 
 // ============== 追加フィルタ（モーダル最下段） ==============
-function ensureDialogSection(){
-  const dlg =
+function findDialog(){
+  return (
     $('ytd-search-filter-options-dialog-renderer') ||
     $('tp-yt-paper-dialog #contentWrapper') ||
-    $('div[role="dialog"]');
-  if (!dlg) return false;
-  if (dlg.querySelector('.nico-section')) return true;
+    $('div[role="dialog"]')
+  );
+}
 
-  const container =
-    dlg.querySelector('#sections, .sections, #content, .content, .scrollable-content') || dlg;
+function findDialogContainer(dialog){
+  return (
+    dialog.querySelector('#sections, .sections, #content, .content, .scrollable-content') ||
+    dialog
+  );
+}
 
-  const sec = document.createElement('div');
-  sec.className = 'nico-section';
-  sec.innerHTML = `
+function createFilterElement(section, item){
+  const el = document.createElement('div');
+  el.className = 'nico-filter-item';
+  el.setAttribute('role', 'menuitemcheckbox');
+  el.dataset.k = item.key;
+  updateFilterElementState(el);
+
+  el.textContent = item.label;
+  el.addEventListener('click', async () => {
+    prefs[item.key] = !prefs[item.key];
+    if (item.exclusive && prefs[item.key]) prefs[item.exclusive] = false;
+    await savePrefs();
+
+    updateAllFilterElementStates(section);
+
+    applyBodyFlags();
+    applyCardFilters();
+  });
+
+  return el;
+}
+
+function updateFilterElementState(el){
+  const key = el.dataset.k;
+  el.setAttribute('aria-checked', String(!!prefs[key]));
+}
+
+function updateAllFilterElementStates(root = document){
+  $$('.nico-filter-item[data-k]', root).forEach(updateFilterElementState);
+}
+
+function ensureDialogSection(){
+  const dialog = findDialog();
+  if (!dialog) return false;
+
+  const existing = dialog.querySelector('.nico-section');
+  if (existing) {
+    updateAllFilterElementStates(existing);
+    return true;
+  }
+
+  const container = findDialogContainer(dialog);
+
+  const section = document.createElement('div');
+  section.className = 'nico-section';
+  section.innerHTML = `
     <div class="nico-title">追加フィルタ</div>
     <div class="nico-items" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
   `;
-  const host = sec.querySelector('.nico-items');
 
-  const make = (label, key, exclusiveWith=null) => {
-    const el = document.createElement('div');
-    el.className = 'nico-filter-item';
-    el.setAttribute('role','menuitemcheckbox');
-    el.setAttribute('aria-checked', String(!!prefs[key]));
-    el.textContent = label;
-    el.addEventListener('click', async ()=>{
-      prefs[key] = !prefs[key];
-      if (exclusiveWith && prefs[key]) prefs[exclusiveWith] = false; // 排他
-      await savePrefs();
-      el.setAttribute('aria-checked', String(!!prefs[key]));
-      if (exclusiveWith) sec.querySelector(`[data-k="${exclusiveWith}"]`)
-        ?.setAttribute('aria-checked', String(!!prefs[exclusiveWith]));
-      // 反映
-      applyBodyFlags();
-      applyCardFilters();
-    });
-    el.dataset.k = key;
-    return el;
-  };
+  const host = section.querySelector('.nico-items');
+  FILTER_ITEMS
+    .map(item => createFilterElement(section, item))
+    .forEach(el => host.appendChild(el));
 
-  // カード系（元の機能）
-  host.append(
-    make('厳密一致（AND / "フレーズ"）', 'strictAnd'),
-    make('ライブのみ', 'liveOnly', 'liveExclude'),
-    make('ライブ除外', 'liveExclude', 'liveOnly'),
-    make('Shorts（単体カード）除外', 'shortsExclude')
-  );
-
-  // “棚”CSSフラグ
-  host.append(
-    make('ショート棚を隠す', 'hideShortsShelf'),
-    make('おすすめ棚を隠す', 'hideAuxShelves'),
-    make('チャンネル塊を隠す', 'hideChannelBlock')
-  );
-
-  container.appendChild(sec);
+  container.appendChild(section);
+  updateAllFilterElementStates(section);
   return true;
 }
 
@@ -186,6 +223,7 @@ async function boot(){
   watchDialog();
   watchResults();
   applyCardFilters(); // 初回適用
+  updateAllFilterElementStates();
 }
 
 (function init(){
@@ -198,6 +236,7 @@ async function boot(){
     await loadPrefs();
     applyBodyFlags();
     applyCardFilters();
+    updateAllFilterElementStates();
   }).observe(document.documentElement, { childList:true, subtree:true });
 
   boot();
