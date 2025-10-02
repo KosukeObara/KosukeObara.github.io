@@ -1,0 +1,49 @@
+/* 追加フィルタ（モーダル内）の見た目 */
+.nico-section {
+  padding: 16px 0;
+  border-top: 1px solid var(--yt-spec-10-percent-layer, #e5e5e5);
+}
+.nico-section .nico-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0 0 12px 0;
+  color: var(--yt-spec-text-primary, #0f0f0f);
+}
+.nico-filter-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 16px 6px 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--yt-spec-10-percent-layer, #e5e5e5);
+  background: var(--yt-spec-badge-chip-background, #f2f2f2);
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  color: var(--yt-spec-text-primary, #0f0f0f);
+}
+.nico-filter-item[aria-checked="true"] {
+  color: var(--yt-spec-themed-blue, #065fd4);
+  border-color: var(--yt-spec-themed-blue, #065fd4);
+}
+
+/* カードを隠す（非破壊） */
+.nico-hidden { display: none !important; }
+
+/* “棚”をCSSだけで隠す（DOMは残す） */
+body.nico-hide-shorts-shelf ytd-reel-shelf-renderer,
+body.nico-hide-shorts-shelf ytd-rich-section-renderer ytd-reel-shelf-renderer,
+body.nico-hide-shorts-shelf ytd-horizontal-list-renderer ytd-reel-item-renderer,
+body.nico-hide-shorts-shelf [data-content-type*="shorts" i],
+body.nico-hide-shorts-shelf [data-variant*="reel" i] {
+  display: none !important;
+}
+body.nico-hide-aux-shelves
+  :is(ytd-shelf-renderer,ytd-horizontal-list-renderer,ytd-rich-section-renderer,
+      ytd-horizontal-card-list-renderer,ytd-search-refinements-section-renderer) {
+  display: none !important;
+}
+body.nico-hide-channel-block ytd-channel-renderer {
+  display: none !important;
+}

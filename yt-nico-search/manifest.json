@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Nico-like Search — Filters + Shelves (Stable)",
+  "version": "0.8.0",
+  "description": "YouTube 検索で ①厳密一致/ライブ/Shorts除外などカード絞り込み ②ショート棚・おすすめ棚・チャンネル塊のCSS非表示 を両立した安定版。",
+  "icons": { "128": "icons/icon128.png" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "css": ["inject.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage"]
+}
