@@ -3,48 +3,134 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>喫茶 朔月 // WEB ARG</title>
+  <title>喫茶 月舟 - 公式サイト</title>
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #090807;
-      --panel: #16120f;
-      --line: #3a2e25;
-      --text: #e9ddcf;
-      --sub: #b6a38f;
-      --accent: #dba972;
+      --bg: #0f0c09;
+      --panel: #1c1611;
+      --line: #4d3b2a;
+      --text: #efe2d1;
+      --sub: #bda893;
+      --accent: #d7a26b;
+      --danger-bg: #130b0f;
+      --danger-panel: #1f1219;
+      --danger-line: #603040;
+      --danger-text: #f1dce5;
+      --danger-sub: #c69faf;
+      --danger-accent: #e187aa;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-      background: radial-gradient(circle at top, #2a1e17 0%, var(--bg) 45%);
+      background: radial-gradient(circle at top, #2c2016 0%, var(--bg) 50%);
       color: var(--text);
       min-height: 100vh;
+      transition: background 0.35s ease, color 0.35s ease;
     }
+
+    body.deep-mode {
+      background: radial-gradient(circle at top, #2b1520 0%, #0b0709 52%);
+      color: var(--danger-text);
+    }
+
     header {
       border-bottom: 1px solid var(--line);
-      padding: 18px 22px;
+      padding: 16px 20px;
       display: flex;
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
+      transition: border-color 0.35s ease;
     }
-    h1 { margin: 0; font-size: 1.12rem; letter-spacing: 0.07em; }
-    .status { color: var(--sub); font-size: 0.85rem; }
-    main { display: grid; grid-template-columns: 340px 1fr; gap: 14px; padding: 14px; }
-    .panel { background: color-mix(in srgb, var(--panel) 92%, black); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-    .panel h2 { margin: 0; padding: 11px 14px; border-bottom: 1px solid var(--line); background: #110d0a; color: #dac5ad; font-size: 0.92rem; }
+
+    body.deep-mode header { border-bottom-color: var(--danger-line); }
+
+    h1 { margin: 0; font-size: 1.1rem; letter-spacing: 0.06em; }
+    .status { color: var(--sub); font-size: 0.84rem; }
+    body.deep-mode .status { color: var(--danger-sub); }
+
+    main {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .panel {
+      background: color-mix(in srgb, var(--panel) 92%, black);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.35s ease, background 0.35s ease;
+    }
+
+    body.deep-mode .panel {
+      background: color-mix(in srgb, var(--danger-panel) 92%, black);
+      border-color: var(--danger-line);
+    }
+
+    .panel h2 {
+      margin: 0;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #140f0b;
+      color: #e2ceb7;
+      font-size: 0.9rem;
+      transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+    }
+
+    body.deep-mode .panel h2 {
+      background: #180d14;
+      border-bottom-color: var(--danger-line);
+      color: #e7bed0;
+    }
+
     .section { padding: 12px 14px; }
     .search-box { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-    input, button { background: #0c0907; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 10px 12px; font: inherit; }
-    button { cursor: pointer; background: #2a1f17; border-color: #604630; }
-    button:hover { background: #3a2a1f; }
+
+    input, button {
+      background: #0e0a07;
+      border: 1px solid var(--line);
+      color: inherit;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    body.deep-mode input,
+    body.deep-mode button {
+      background: #130a10;
+      border-color: var(--danger-line);
+    }
+
+    button {
+      cursor: pointer;
+      background: #312317;
+      border-color: #6d5038;
+    }
+
+    body.deep-mode button {
+      background: #3a1b2b;
+      border-color: #87455d;
+    }
+
     .hint { margin-top: 8px; color: var(--sub); font-size: 0.8rem; line-height: 1.6; }
-    .search-log { color: #e9b885; font-size: 0.8rem; margin-top: 8px; }
-    .result-box { margin-top: 10px; border: 1px dashed #5d4735; border-radius: 10px; padding: 8px; }
+    body.deep-mode .hint { color: var(--danger-sub); }
+
+    .search-log { color: #e6b47f; font-size: 0.8rem; margin-top: 8px; }
+    body.deep-mode .search-log { color: #e9a5c2; }
+
+    .result-box { margin-top: 10px; border: 1px dashed #674b34; border-radius: 10px; padding: 8px; }
+    body.deep-mode .result-box { border-color: #7a4156; }
+
     .result-title { font-size: 0.78rem; color: var(--sub); margin-bottom: 6px; }
+    body.deep-mode .result-title { color: var(--danger-sub); }
+
     .result-links { display: flex; flex-wrap: wrap; gap: 6px; }
+
     .result-link {
       border: 1px solid #6f553d;
       color: #f2c796;
@@ -55,20 +141,121 @@
       text-decoration: none;
       cursor: pointer;
     }
-    .result-link:hover { background: #2a1f17; }
-    .list { max-height: 42vh; overflow: auto; display: flex; flex-direction: column; gap: 8px; }
-    .page-btn { width: 100%; text-align: left; border: 1px solid var(--line); background: #100c09; padding: 10px; border-radius: 10px; display: grid; gap: 5px; }
-    .page-btn:hover { border-color: #8a6a4c; }
+
+    body.deep-mode .result-link {
+      border-color: #8a4a62;
+      color: #f0b7cf;
+      background: #2a111d;
+    }
+
+    .list {
+      max-height: 42vh;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .page-btn {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #100c09;
+      color: inherit;
+      padding: 10px;
+      border-radius: 10px;
+      display: grid;
+      gap: 5px;
+    }
+
+    body.deep-mode .page-btn {
+      border-color: var(--danger-line);
+      background: #180d14;
+    }
+
     .title-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .badge { font-size: 0.72rem; color: #22160c; background: var(--accent); border-radius: 999px; padding: 1px 8px; font-weight: 700; }
+
+    .badge {
+      font-size: 0.72rem;
+      color: #22160c;
+      background: var(--accent);
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-weight: 700;
+    }
+
+    body.deep-mode .badge {
+      color: #2d0f1b;
+      background: var(--danger-accent);
+    }
+
     .meta { color: var(--sub); font-size: 0.78rem; }
-    .viewer { padding: 18px; min-height: 70vh; }
+    body.deep-mode .meta { color: var(--danger-sub); }
+
+    .viewer {
+      padding: 18px;
+      min-height: 70vh;
+      border-left: 4px solid transparent;
+      transition: border-color 0.35s ease;
+    }
+
+    .viewer.surface { border-left-color: #735334; }
+    .viewer.deep { border-left-color: #8c405b; }
+
     .viewer h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.3rem; }
+
     .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
-    .chip { border: 1px solid #6e543f; color: #e7c8a4; border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; }
-    .viewer p { line-height: 1.95; white-space: pre-wrap; }
-    .x-report { margin-top: 16px; display: inline-block; border: 1px solid #7b593e; color: #f2c796; text-decoration: none; border-radius: 10px; padding: 10px 12px; background: #2e2117; }
-    .x-report:hover { background: #3b2a1e; }
+
+    .chip {
+      border: 1px solid #6e543f;
+      color: #e7c8a4;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+    }
+
+    body.deep-mode .chip {
+      border-color: #8b4f66;
+      color: #efbed2;
+    }
+
+    .doc-type {
+      font-size: 0.8rem;
+      color: var(--sub);
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #5f4630;
+      padding-bottom: 8px;
+    }
+
+    body.deep-mode .doc-type {
+      color: var(--danger-sub);
+      border-bottom-color: #76475c;
+    }
+
+    .viewer p {
+      line-height: 1.95;
+      white-space: pre-wrap;
+      margin: 0;
+      font-size: 0.98rem;
+    }
+
+    .x-report {
+      margin-top: 16px;
+      display: inline-block;
+      border: 1px solid #7b593e;
+      color: #f2c796;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #2e2117;
+    }
+
+    body.deep-mode .x-report {
+      border-color: #98556e;
+      color: #f5bfd4;
+      background: #321523;
+    }
+
     @media (max-width: 900px) {
       main { grid-template-columns: 1fr; }
       .list { max-height: 34vh; }
@@ -78,7 +265,7 @@
 </head>
 <body>
   <header>
-    <h1>喫茶 朔月 // アーカイブサイト</h1>
+    <h1>喫茶 月舟 - 公式サイト</h1>
     <div class="status" id="status"></div>
   </header>
 
@@ -91,9 +278,8 @@
           <button type="submit">検索</button>
         </form>
         <div class="hint">
-          30ページ中6ページのみ公開中。<br />
-          文章の中の違和感を拾って検索してください。<br />
-          Lvが上がるほど、語をそのまま書かない記述が増えます。
+          公開ページは6件。店の通常情報に見えて、違和感のある語が混ざっています。<br />
+          深いレベルでは資料の形式自体が変わります。ページ間の一致点から語を推理してください。
         </div>
         <div class="search-log" id="search-log">直近検索: なし</div>
         <div class="result-box">
@@ -106,46 +292,46 @@
       <div class="section list" id="page-list"></div>
     </aside>
 
-    <section class="panel viewer" id="viewer"></section>
+    <section class="panel viewer surface" id="viewer"></section>
   </main>
 
   <script>
     const pages = [
-      { id: "P01", level: 0, title: "トップ / 喫茶 朔月について", security: "公開", difficulty: "易", searchable: false, text: "喫茶 朔月は、駅前通りから一本入った細い坂道の途中にある、こぢんまりとした古い店です。\n開店当初から『会話の音量を少しだけ落とせる場所』を目指し、木の床、低い照明、湯気の立つ珈琲を守ってきました。\nこのサイトは、店の案内と、長年貼りためた店内掲示の記録をまとめたものです。" },
-      { id: "P02", level: 0, title: "メニュー / 本日のおすすめ", security: "公開", difficulty: "易", searchable: false, text: "本日のブレンドは『白磁』。やわらかな酸味の後に、少しだけ金属のような余韻が残る豆を使っています。\n季節のデザートは、薄い封のように重ねたミルフィーユ。常連は冗談で『白い封筒みたいだね』と呼びます。\nおすすめの時間帯は開店直後。窓辺の席に朝の光がまっすぐ差し込みます。" },
-      { id: "P03", level: 0, title: "店内設備 / インテリア", security: "公開", difficulty: "易", searchable: false, text: "壁には古い振り子時計があります。修理を重ね、見た目だけは昔のままです。\n掃除当番の記録には、なぜか『逆さ時計』というメモが何度も出てきます。\n店主いわく、閉店前に必ず針を確認してから鍵を閉めるのが習慣とのこと。" },
-      { id: "P04", level: 0, title: "アクセス / 地下保管庫について", security: "公開", difficulty: "易", searchable: false, text: "店の裏手には、戦前の建物を改装した小さな地下倉庫があります。\n食材ではなく古い書類の保管が中心で、湿度計の点検値はいつも9を境に赤字になります。\nスタッフ用メモには『深度9』という、地質調査のような語が混ざっています。" },
-      { id: "P05", level: 0, title: "お知らせ / 営業案内", security: "公開", difficulty: "易", searchable: false, text: "通常営業は7:30-20:00。月曜のみ18:00閉店。\n貸切利用、朗読会、写真展の相談はメールで受け付けます。\n掲載中の文章は当時の掲示を可能な限り原文のまま残しているため、文体に揺れがあります。" },
-      { id: "P06", level: 0, title: "FAQ / よくある質問", security: "公開", difficulty: "易", searchable: false, text: "Q. 外部検索でページは出ますか？\nA. いいえ。公開範囲外の記録はこのサイト内検索でのみ到達できます。\nQ. 文章が長くて読みにくいです。\nA. ゆっくり読んで、言い回しの癖や不自然な語を拾ってみてください。" },
+      { id: "P01", level: 0, mode: "surface", form: "店舗トップ", title: "喫茶 月舟について", security: "公開", difficulty: "易", searchable: false, text: "喫茶 月舟は、港の見える坂道の途中にある小さな喫茶店です。\n朝はトーストと深煎り珈琲、昼は軽食、夜は読書席を中心に静かな営業をしています。\n観光客向けの派手な看板はなく、地元のお客様がゆっくり過ごせる空間づくりを大切にしています。\n初めての方は窓側席、常連の方は奥の本棚席をよく利用されています。" },
+      { id: "P02", level: 0, mode: "surface", form: "メニューページ", title: "ドリンクメニュー", security: "公開", difficulty: "易", searchable: false, text: "定番ブレンド、季節のシングルオリジン、ハーブティーを用意しています。\n紅茶は香り重視で、柑橘、燻香、蜂蜜感などを指標に毎月入れ替えています。\n今月の限定茶は説明文が長すぎるため店頭黒板のみ掲載。\nスタッフ間メモではこの限定茶を、夜間仕込みの基準茶と呼んでいます。" },
+      { id: "P03", level: 0, mode: "surface", form: "アクセス", title: "アクセスと営業時間", security: "公開", difficulty: "易", searchable: false, text: "最寄りは海沿い線・湊町駅、北口から徒歩7分。\n朝営業は7:00開始、月曜のみ18:00閉店。\n建物裏手に古い搬入口があり、開店前に納品車が入る場合があります。\n道に迷った際は電話よりも、青いポスト横の木札を目印にしてください。" },
+      { id: "P04", level: 0, mode: "surface", form: "フードメニュー", title: "軽食とデザート", security: "公開", difficulty: "易", searchable: false, text: "厚切りトースト、卵サンド、自家製プリン、週替わりスープを提供。\n仕込み表には通常使わない用語があり、焼成、抽出、冷却のほか封緘という項目が混ざります。\n封緘工程は公開レシピに含まれず、厨房責任者のみ確認できる運用です。" },
+      { id: "P05", level: 0, mode: "surface", form: "お知らせ", title: "今月のイベント", security: "公開", difficulty: "易", searchable: false, text: "毎週木曜は朗読会、最終日曜は店内写真展を実施。\n録音を伴うイベントでは、奥の防音室を使用します。\n防音室の利用時間は20分単位ですが、過去の注意書きには17分固定とだけ残る紙片があります。\n現在は通常運用に戻っています。" },
+      { id: "P06", level: 0, mode: "surface", form: "FAQ", title: "よくある質問", security: "公開", difficulty: "易", searchable: false, text: "Q: このサイトの非公開ページはありますか。\nA: 通常案内外の記録は、サイト内検索からのみ閲覧できます。\nQ: 文中に業務用語が混ざっていて難しいです。\nA: そのまま読み流さず、複数ページで繰り返される語を探してください。" },
 
-      { id: "P07", level: 1, title: "掲示控え / 封緘の練習", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], text: "新人研修の項目に『封緘（ふうかん）練習』がある。飲食店には不似合いだが、理由欄は塗りつぶし。\n白い紙封筒を使い、蝋を溶かして半月紋を押す手順が細かく残る。\n最後の行だけ異なる筆跡で『夜明けの鍵は開店前にしか使うな』と書かれている。" },
-      { id: "P08", level: 1, title: "掲示控え / 早朝搬入", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], text: "搬入簿の記載時刻は、なぜか日の出直前に集中している。\n品目欄は豆袋、ミルク缶、乾物と普通だが、備考欄の一部に『客席ではなく地下へ』という追記。\n担当者名はイニシャルのみで、同じ人物が連日サインしている。" },
-      { id: "P09", level: 1, title: "清掃記録 / 閉店後チェック", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], text: "閉店後点検の手順書には、時計の向きを確認する項目がある。\n通常なら時刻だけで十分だが、ここでは『向き』が優先される。\n補足メモに『03:17で止める』『無音室に入る前に』と続き、場所名が浮いている。" },
-      { id: "P10", level: 1, title: "設備台帳 / 裏階段", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], text: "裏階段の踊り場にある時計の裏板には、削り跡のような線が多数。\n普通に読むと意味を持たないが、上下を入れ替えると一部が文字に見える。\n作業報告では、その現象を『位相がずれる』と表現している。" },
-      { id: "P11", level: 1, title: "地下点検 / 配管ノート", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], text: "地下最下層の配管図に、業者が使わない独自記号がある。\n注釈には『黒い潮』という詩のような語。\n水ではなく、空気の流れが逆向きに動いた夜の記録が、別紙で参照されている。" },
-      { id: "P12", level: 1, title: "地下点検 / 騒音測定", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], text: "通常の騒音測定票なのに、9分ごとに無音区間が発生している。\n無音区間の直後にだけ、短い数字列が印字される。\n印字機は古く、誰が設定したのか記録が残っていない。" },
+      { id: "P07", level: 1, mode: "deep", form: "厨房日誌", title: "夜間仕込みノート 5/12", security: "内部", difficulty: "中", searchable: true, searchTerms: ["封緘"], text: "22:40 仕込み開始。\n豆計量、シロップ調整、冷蔵在庫確認。\n23:30 封緘済みケースを地下庫へ移送。\n封緘担当者コメント: 朝便が来る前に鍵を戻すこと。\n備考: 封緘ケースのラベルに古いスタンプが混ざる。" },
+      { id: "P08", level: 1, mode: "deep", form: "店員チャットログ", title: "スタッフ連絡 5/13 早朝", security: "内部", difficulty: "中", searchable: true, searchTerms: ["封緘"], text: "[05:18] 早朝便、いつもの裏搬入口。\n[05:21] 今日も限定茶の箱だけ別扱いになってる。\n[05:24] ラベルに燻した木の匂いって書いてあった。\n[05:26] その箱、厨房じゃなくて地下の棚Dだよ。\n[05:29] 店長には通常納品として処理しておく。" },
+      { id: "P09", level: 1, mode: "deep", form: "設備点検票", title: "防音室運用点検", security: "内部", difficulty: "中", searchable: true, searchTerms: ["17分固定"], text: "設備ID A-03 防音室。\nイベント利用時の標準時間は20分。\nただし旧手順書では17分で強制終了する設定が残存。\n理由欄は改定時に削除済み。\n備考欄に、夜番のみ適用と手書き追記。" },
+      { id: "P10", level: 1, mode: "deep", form: "倉庫入出庫表", title: "地下庫 D棚 記録", security: "内部", difficulty: "中", searchable: true, searchTerms: ["17分固定"], text: "D棚 入庫 3件。\n品目1 紅茶葉、品目2 記録媒体、品目3 未記載。\n未記載箱は封印シール付き、開封権限は夜間責任者のみ。\n出庫時刻は毎回03:17前後に集中。\n通常営業時間と一致しない。" },
+      { id: "P11", level: 1, mode: "deep", form: "仕入れメール", title: "茶葉商社との往復", security: "内部", difficulty: "中", searchable: true, searchTerms: ["夜間仕込み"], text: "件名: 今月限定茶の仕様確認。\n本文: 香りは松の煙、味は乾いた果実、色は赤銅。\n産地候補は中国南部と記載されていたが、伝票では福建の山地に修正。\n同仕様の茶を常時扱う店は県内にほぼない。\n担当者注記: この茶葉名は一般客には伏せる。" },
+      { id: "P12", level: 1, mode: "deep", form: "清掃担当メモ", title: "裏搬入口の貼り紙", security: "内部", difficulty: "中", searchable: true, searchTerms: ["夜間仕込み"], text: "木札の裏に、見慣れない略号が鉛筆で並ぶ。\n清掃時に消そうとしたが、店長から残すよう指示。\n略号の末尾は毎回同じ3文字。\n物流番号ではなく、店内符牒の可能性。" },
 
-      { id: "P13", level: 2, title: "貸金庫記録 / 朔月番号", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], text: "店名入りの古い鍵束のうち、一本だけ重量が違う。\n対応する鍵穴は客席側に見当たらず、地下保管庫の壁面図にも載っていない。\n管理簿の余白に『観測者Aが回収』という事務的な一文だけが残る。" },
-      { id: "P14", level: 2, title: "鍵管理簿 / 欠番", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], text: "鍵番号は1〜12のはずだが、7だけ記録が空白。\n欠番の理由欄には訂正印が重なり、判読できない。\n別紙の注意書きに『七番は手順名であり番号ではない』という不可解な注釈。" },
-      { id: "P15", level: 2, title: "防音室図面 / 壁裏", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], text: "地下の防音室は、本来は朗読会の録音練習に使うと説明されていた。\nしかし図面には二重壁のさらに内側に小部屋が描かれ、扉の記号だけが別様式。\n紫外線で現れる走り書きに『石英塔』の語。店内と結び付かない。" },
-      { id: "P16", level: 2, title: "録音起こし / 聞き取り不能", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], text: "テープ起こし担当のメモ:『言葉の頭しか拾えない』。\n断片は、い・そ・う、あるいは、い・そ・う・さ、とも読める。\nこの時点では意味がつながらないが、同ページ下部に『像を反転して再確認』という赤字。" },
-      { id: "P17", level: 2, title: "地下連絡路 / 非公開通路", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], text: "倉庫の奥に、店の図面にない細い連絡路がある。\n床勾配は外へ向かうのに、空気流向は内側へ戻る。\n監督者のコメントは短く『離岸流』。本来は海で使う語が、ここでだけ繰り返される。" },
-      { id: "P18", level: 2, title: "保守報告 / 異常値35.6", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], text: "定期保守の表で、ひとつだけ説明のない数値35.6が太字。\n機器メーカー問い合わせ欄は未送信のまま。\n備考には『場所ではなく、夜の現象を示す記号』とだけある。" },
+      { id: "P13", level: 2, mode: "deep", form: "新聞切り抜き", title: "地方紙 2009/06/02 社会面", security: "機密", difficulty: "高", searchable: true, searchTerms: ["03:17"], text: "港町の喫茶店地下で男性が死亡。\n警察は当初、設備事故の可能性を示したが、後に詳細を非公表とした。\n報道各社への配布資料には、店名と発生時刻以外が大幅に黒塗り。\n続報は短く、紙面では数日で扱いが終了している。" },
+      { id: "P14", level: 2, mode: "deep", form: "新聞切り抜き", title: "業界紙 2009/06/05 短報", security: "機密", difficulty: "高", searchable: true, searchTerms: ["03:17"], text: "同店では事故前後に特殊茶葉の取り扱い実績があったとされる。\n香り特性は燻煙、干果、薬香。\n記者注: これらの特徴を持つ茶は限られる。\nしかし記事末尾で銘柄名は伏字。" },
+      { id: "P15", level: 2, mode: "deep", form: "店員メール", title: "内部連絡 事故翌週", security: "機密", difficulty: "高", searchable: true, searchTerms: ["D棚"], text: "件名: D棚の扱い変更について。\n今後、D棚の入出庫は紙台帳でなく口頭報告とする。\n外部監査が入った場合、限定茶の件は季節企画と説明すること。\n防音室の設定値17分について質問されたら、旧ファームウェア不具合で統一。\n返信先はA係のみ。" },
+      { id: "P16", level: 2, mode: "deep", form: "店員メール", title: "返信ログ A係", security: "機密", difficulty: "高", searchable: true, searchTerms: ["D棚"], text: "A係回答。\n限定茶は店内名称を使わず、伝票コードで統一する。\nコード末尾はC3。\nなお、茶葉名を直接書かないこと。検索で辿られる。\n必要なら香味要素だけを残す。" },
+      { id: "P17", level: 2, mode: "deep", form: "監査報告書", title: "第4四半期 内部監査抄録", security: "機密", difficulty: "高", searchable: true, searchTerms: ["C3"], text: "監査対象: 在庫管理、夜間運用、防音室ログ。\n所見1 D棚のアクセスは監査証跡不足。\n所見2 03:17前後の集中アクセスを説明できていない。\n所見3 限定茶の説明資料が香味要素のみで、品目名が欠落。\n改善提案は提出済みだが、採択記録なし。" },
+      { id: "P18", level: 2, mode: "deep", form: "監査報告書", title: "別紙 参考照会", security: "機密", difficulty: "高", searchable: true, searchTerms: ["C3"], text: "参考照会先へ送った質問。\n燻煙香、乾果、赤銅色、福建、松脂系余韻という条件を満たす紅茶の一般名は何か。\n回答欄は切り取られている。\n欄外メモ: 一般検索で候補はすぐ出る。" },
 
-      { id: "P19", level: 3, title: "関係者メモ / Aの記録", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], text: "Aは常連名簿にも仕入れ先にも見当たらない。\nそれでも監査票には毎回サインがあり、閉店後点検を主導した形跡がある。\n本文末尾:『七番手順以外で封を開くな。先に時計を見ること』。" },
-      { id: "P20", level: 3, title: "関係者メモ / 反転指示", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], text: "『像を映して読む』という指示は、P16の断片を別方向から読むことを示すらしい。\nい・そ・う、という断片は鏡にかけると、音のまとまりが変わる。\n作業欄の端に小さく『位相』の二字。" },
-      { id: "P21", level: 3, title: "写真台帳 / 鏡面庭", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], text: "店の裏庭を撮ったはずの写真に、存在しない石の塔が映る。\nただし正像では見えず、ネガを左右反転した時にだけ輪郭が立つ。\n撮影者メモは『庭は鏡像で読む』。" },
-      { id: "P22", level: 3, title: "録音再解析 / 語尾先行", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], text: "音声解析ソフトの古いログに『語尾先行』という異常判定。\n『さがい』という断片が、一定間隔で現れては消える。\n逆順・反転・欠番補間を同時に使うと、別語に変化する可能性が示唆される。" },
-      { id: "P23", level: 3, title: "連絡路追跡 / 終点", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["離岸流"], text: "連絡路の終点は海でも川でもない。喫茶店地下の旧防空壕跡。\nそこに残る紙片は『35.6は座標ではない』と強調している。\nさらに『潮位の異常時刻』という言葉がかすれて読める。" },
-      { id: "P24", level: 3, title: "未提出報告 / 七番欠落", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["離岸流"], text: "未提出の報告書には、文中の7番目の語だけが機械的に削除されている。\n同じ欠落を補って読むと、位相が反転するという結論へ寄る。\nここまでで、単語を拾うだけの段階は終わる。" },
+      { id: "P19", level: 3, mode: "deep", form: "警察照会回答", title: "照会番号 09-MN-31", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["監査証跡不足"], text: "照会に対し、当時の担当署からは資料散逸の回答。\nただし、地下庫で見つかった袋片に茶葉銘柄の一部印字あり。\n残読文字は スー のみ。\n通常流通銘柄との一致照合は未実施。" },
+      { id: "P20", level: 3, mode: "deep", form: "写真資料", title: "押収品写真キャプション", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["監査証跡不足"], text: "写真12 茶葉缶の側面ラベル、熱で一部溶融。\n可読要素: 原産地 福建、等級 TGFOP、燻香強。\nキャプション末尾に手書きで この銘柄はホテル需要が中心 と記載。\n銘柄名は写っていない。" },
+      { id: "P21", level: 3, mode: "deep", form: "店長私信", title: "下書きメール（送信失敗）", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["A係"], text: "あの夜に出していた茶の名前は、ここには書かない。\n検索すれば出る単語だから。\n香りの説明だけ残す。焚火のあとの木材、乾いた果実、樹脂の甘い残り香。\nもし見つけたなら、次は事件名ではなく通称で追ってほしい。" },
+      { id: "P22", level: 3, mode: "deep", form: "掲示板ログ", title: "匿名フォーラム書き込み", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["A係"], text: "投稿1 月舟の件、茶葉で店を特定できる。\n投稿2 燻香の紅茶で福建なら答えはほぼ一択。\n投稿3 事件名は報道用の正式名より、通称の方が検索ヒットが多い。\n投稿4 港坂の地下って呼び方でまとめられてたはず。" },
+      { id: "P23", level: 3, mode: "deep", form: "新聞切り抜き", title: "夕刊コラム 抜粋", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["ラプサンスーチョン"], text: "港の坂道にある喫茶店で、常連たちが好んだ燻香の茶。\nあの夜、同じ香りが地下庫まで満ちていたと証言がある。\n事件の詳細は伏せられたが、地域では地下室の件として語り継がれた。\n正式名称は長く、通称の方が定着している。" },
+      { id: "P24", level: 3, mode: "deep", form: "店員日報", title: "日報 事故後3か月", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["ラプサンスーチョン"], text: "今日は例の茶を棚から外した。\n客から香りについて聞かれても、別銘柄で説明する方針。\n店内では誰も事件名を口にしない。\nただ、夜番同士では港坂地下とだけ言えば通じる。" },
 
-      { id: "P25", level: 4, title: "監査外文書 / 手順名の正体", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["位相差"], text: "七番手順は作業手順書の項目名ではなく、店内で起きた現象につけられた仮名だった。\n『時計の向き』『無音区間』『連絡路の逆流』は同じ夜に重なる。\nつまり、位相差は設備不良ではなく事件の兆候である。" },
-      { id: "P26", level: 4, title: "監査外文書 / 庭の碑文", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["鏡像庭園"], text: "裏庭の古い石板に刻まれた線は、正面では意味を成さない。\n反転写真にすると『潮位』の二字が最も濃く浮く。\nP23の『異常時刻』と繋ぐと、場所でなく状態を示していると分かる。" },
-      { id: "P27", level: 4, title: "監査外文書 / 三条件", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["反位相"], text: "文書群の共通条件は三つ。位相差、反位相、35.6。\nこれらはバラバラの専門語に見えるが、同一夜の一連の現象記録。\n次に検索すべきは人物名でも場所名でもなく、事件の呼称である。" },
-      { id: "P28", level: 4, title: "監査外文書 / 35.6注釈", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["35.6", "北緯35.6"], text: "35.6を座標として扱ったメモは、すべて誤読扱いで訂正されていた。\n正しい読みは『潮位反転ピークの時刻コード』。\nここで初めて、喫茶 朔月の地下で人命事故が発生した夜へ話が接続する。" },
+      { id: "P25", level: 4, mode: "deep", form: "捜査メモ", title: "非公開メモ / 呼称整理", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["港坂地下"], text: "正式名称: 月舟地下保管庫内死亡事件。\n通称候補: 港坂地下事件、月舟地下事件。\n地域掲示板では港坂地下事件の使用率が高い。\n検索導線としては通称を優先。" },
+      { id: "P26", level: 4, mode: "deep", form: "捜査メモ", title: "証言突合", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["港坂地下"], text: "証言A 03:17ごろ、防音室タイマー音。\n証言B 裏搬入口から封緘箱を運ぶ2名を目撃。\n証言C 地下で燻香が強く、通常の厨房臭と異なる。\n3証言の共通先は月舟地下保管庫。" },
+      { id: "P27", level: 4, mode: "deep", form: "裁判傍聴記録", title: "傍聴メモ 断片", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["月舟地下事件"], text: "法廷では正式事件名が読み上げられたが、傍聴者メモの多くは通称で記録。\n検索データ上、正式名単独だと古い紙面画像が中心で辿りにくい。\n通称から入ると関連資料へ到達しやすい。\n最終ログへの鍵は、通称と店名の接続。" },
+      { id: "P28", level: 4, mode: "deep", form: "編集部注記", title: "特集記事未掲載メモ", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["月舟地下事件"], text: "記事化見送り理由。\n遺族意向により詳細描写を控える。\nただし資料保存のためタグ付けは実施。\nタグ: 月舟 地下 保管庫 港坂 通称事件名。\nここまで読んだ者なら最後の語は推定可能。" },
 
-      { id: "P29", level: 5, title: "最終層 / 事件統合報告", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["位相差", "反位相", "潮位"], text: "統合すると、次の流れが成立する。\n\n開店前、封緘文書が開かれ、時計が逆向きに固定される。\n03:17、防音室で無音区間が発生。\n同時刻、連絡路で逆流現象と35.6コードを記録。\n\nこの夜、地下で一名が死亡。\nだが報告書は事故名を伏せ、店は通常営業を続けた。\n最終語は、ここまでの全体像を読めていれば導ける。" },
-      { id: "P30", level: 5, title: "最終層 / クリアレポート", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["朔月地下殺人事件"], final: true, text: "正解。\nあなたは喫茶 朔月で隠蔽された事件名『朔月地下殺人事件』を特定した。\n以下からXにクリア報告を投稿してください。" }
+      { id: "P29", level: 5, mode: "deep", form: "統合ファイル", title: "最終統合 / 閲覧注意", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["港坂地下事件"], text: "あなたが追ってきたのは、喫茶店サイトの奥に隠されていた資料群。\n通常ページの違和感、夜間運用、封緘箱、03:17、防音室、燻香の茶葉、通称の連鎖。\n点をつなぐと一つの事件に収束する。\n最後の検索語は、店名と通称を結合した呼び名。" },
+      { id: "P30", level: 5, mode: "deep", form: "クリアページ", title: "到達記録", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["月舟港坂地下事件"], final: true, text: "正解。\nあなたはこの店に隠された記録の終点へ到達した。\n事件の通称と店名を結合して辿り着いた探索者として記録されます。" }
     ];
 
     const discovered = new Set(["P01", "P02", "P03", "P04", "P05", "P06"]);
@@ -201,7 +387,7 @@
             <strong>${p.id} ${p.title}</strong>
             <span class="badge">${levelText(p.level)}</span>
           </div>
-          <div class="meta">難易度: ${p.difficulty} / 機密度: ${p.security}</div>
+          <div class="meta">形式: ${p.form} / 機密度: ${p.security}</div>
         `;
         btn.addEventListener("click", () => {
           currentPageId = p.id;
@@ -216,8 +402,13 @@
       const page = pages.find((p) => p.id === currentPageId);
       if (!page) return;
 
+      const isDeep = page.mode === "deep";
+      viewerEl.classList.toggle("deep", isDeep);
+      viewerEl.classList.toggle("surface", !isDeep);
+      document.body.classList.toggle("deep-mode", isDeep);
+
       const finalLink = page.final
-        ? `<a class="x-report" href="https://x.com/intent/tweet?text=${encodeURIComponent("【ARGクリア】『喫茶 朔月』の事件名を特定しました。#WebARG #喫茶朔月")}" target="_blank" rel="noopener noreferrer">Xにクリア報告を投稿する</a>`
+        ? `<a class="x-report" href="https://x.com/intent/tweet?text=${encodeURIComponent("【ARGクリア】喫茶 月舟の隠し記録を最後まで解読しました。#WebARG #喫茶月舟")}" target="_blank" rel="noopener noreferrer">Xにクリア報告を投稿する</a>`
         : "";
 
       viewerEl.innerHTML = `
@@ -227,6 +418,7 @@
           <span class="chip">難易度: ${page.difficulty}</span>
           <span class="chip">機密度: ${page.security}</span>
         </div>
+        <div class="doc-type">資料形式: ${page.form}</div>
         <p>${page.text}</p>
         ${finalLink}
       `;
@@ -250,7 +442,7 @@
         renderResultLinks([]);
         viewerEl.innerHTML = `
           <h3>検索結果: 0件</h3>
-          <p>一致する記録は見つかりませんでした。文中で繰り返される語、時刻、妙な言い回しをもう一度確認してください。</p>
+          <p>一致する記録は見つかりませんでした。\n文中で繰り返される語や、資料同士で共通する香味・時刻・通称に注目してください。</p>
         `;
         return;
       }
