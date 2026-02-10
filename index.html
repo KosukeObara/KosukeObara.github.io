@@ -1,11 +1,376 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>プライバシーポリシー</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>深層記録群 // ARG探索アーカイブ</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090d;
+      --panel: #10161f;
+      --line: #263244;
+      --text: #d7e1ee;
+      --sub: #8fa4bf;
+      --accent: #58c6ff;
+      --danger: #ff6978;
+      --ok: #83f0c6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: radial-gradient(circle at top, #131c2a 0%, var(--bg) 45%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      letter-spacing: 0.08em;
+    }
+
+    .status {
+      color: var(--sub);
+      font-size: 0.88rem;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .panel {
+      background: color-mix(in srgb, var(--panel) 92%, black);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      letter-spacing: 0.07em;
+      color: #b4c6dd;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #0c1119;
+    }
+
+    .section { padding: 12px 14px; }
+
+    .search-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    input, button {
+      background: #060a11;
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      background: #11263a;
+      border-color: #2d4f72;
+    }
+
+    button:hover { background: #17324d; }
+
+    .hint {
+      margin-top: 10px;
+      color: var(--sub);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .list {
+      max-height: 55vh;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .page-btn {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #0a1018;
+      padding: 10px;
+      border-radius: 10px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .page-btn:hover { border-color: #496384; }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      color: #0a1118;
+      background: var(--accent);
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .meta { color: var(--sub); font-size: 0.8rem; }
+
+    .viewer {
+      padding: 18px;
+      min-height: 70vh;
+    }
+
+    .viewer h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.3rem;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0 14px;
+    }
+
+    .chip {
+      border: 1px solid #38526e;
+      color: #97c6ef;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+
+    .viewer p { line-height: 1.8; }
+
+    .keywords {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed #304258;
+    }
+
+    .keywords strong { color: var(--ok); }
+
+    .x-report {
+      margin-top: 16px;
+      display: inline-block;
+      border: 1px solid #307fba;
+      color: #96d8ff;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #092033;
+    }
+
+    .x-report:hover { background: #0d2c46; }
+
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      .list { max-height: 38vh; }
+      .viewer { min-height: 48vh; }
+    }
+  </style>
 </head>
 <body>
-  <h1>プライバシーポリシー</h1>
-  <p>このアプリは個人利用目的でPinterest APIを使用します。個人情報を収集・共有することはありません。</p>
+  <header>
+    <h1>深層記録群 // WEB ARG: 「波間の監査ログ」</h1>
+    <div class="status" id="status"></div>
+  </header>
+
+  <main>
+    <aside class="panel">
+      <h2>サイト内検索</h2>
+      <div class="section">
+        <form id="search-form" class="search-box">
+          <input id="search-input" type="text" placeholder="キーワードを入力" autocomplete="off" />
+          <button type="submit">検索</button>
+        </form>
+        <div class="hint">
+          閲覧可能ページ: 30ページ中6ページから開始。<br />
+          初期公開はすべて <strong>Lv0</strong>。本文に3つの初期キーワードが埋め込まれています。
+        </div>
+      </div>
+
+      <h2>発見済みページ</h2>
+      <div class="section list" id="page-list"></div>
+    </aside>
+
+    <section class="panel viewer" id="viewer"></section>
+  </main>
+
+  <script>
+    const pages = [
+      { id: "P01", level: 0, title: "公開ログ #01 / イントロダクション", security: "公開", difficulty: "易", searchable: false, keywords: [], text: "ようこそ。あなたは廃止された調査網『波間』にアクセスしました。ここには削除された監査記録の残滓が眠っています。" },
+      { id: "P02", level: 0, title: "公開ログ #02 / 港湾監視カメラ", security: "公開", difficulty: "易", searchable: false, keywords: ["白い封筒"], text: "午前4時、岸壁の監視映像に不自然な人物。手にしていたのは濡れていない『白い封筒』だった。封筒の宛名は消されている。" },
+      { id: "P03", level: 0, title: "公開ログ #03 / 管制室の停止時計", security: "公開", difficulty: "易", searchable: false, keywords: ["逆さ時計"], text: "中央管制室で見つかった壁時計はなぜか天地が逆だった。時刻は03:17で停止。報告書には『逆さ時計』とだけ赤字で記される。" },
+      { id: "P04", level: 0, title: "公開ログ #04 / 潜水ドローン断片", security: "公開", difficulty: "易", searchable: false, keywords: ["深度9"], text: "壊れた潜水ドローンの最終音声にはノイズとともに『深度9で何かが見ている』という声が残されていた。" },
+      { id: "P05", level: 0, title: "公開ログ #05 / 観測メモ", security: "公開", difficulty: "易", searchable: false, keywords: [], text: "調査対象は文書、音声、映像に分散。単語同士をつなげることで未公開セクションへの入口が開く。" },
+      { id: "P06", level: 0, title: "公開ログ #06 / 利用手順", security: "公開", difficulty: "易", searchable: false, keywords: [], text: "このサイトは外部検索エンジンと切り離されている。ページ発見には右側のサイト内検索のみ有効。" },
+
+      { id: "P07", level: 1, title: "隔離記録 #07 / 封筒の送り主", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], keywords: ["夜明けの鍵"], text: "封筒の裏面に微細な刻印。解読すると『夜明けの鍵は海霧倉庫に』とある。" },
+      { id: "P08", level: 1, title: "隔離記録 #08 / 封筒の紙質", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], keywords: [], text: "紙繊維は一般流通品ではない。塩化ナトリウム結晶が異常に少なく、陸上保管が示唆される。" },
+      { id: "P09", level: 1, title: "隔離記録 #09 / 止まった時刻", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], keywords: ["無音室"], text: "03:17は音響実験棟で電力が落ちた時刻と一致。備考欄: 『無音室に入るな』。" },
+      { id: "P10", level: 1, title: "隔離記録 #10 / 逆さ設置の意図", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], keywords: [], text: "時計を逆さにすると、背面刻印が正位置で読める。番号列は鍵束の並び順だった。" },
+      { id: "P11", level: 1, title: "隔離記録 #11 / 深度9の映像", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], keywords: ["黒い潮"], text: "深度9の映像に黒い濁流。潮流計は停止していたが、流体だけが逆走していた。" },
+      { id: "P12", level: 1, title: "隔離記録 #12 / 潮目の異常", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], keywords: [], text: "同地点の潮目に周期性あり。9分ごとに通信ノイズが消える。" },
+
+      { id: "P13", level: 2, title: "封鎖ファイル #13 / 倉庫の床下", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], keywords: ["観測者A"], text: "海霧倉庫の床下から磁気カード発見。署名欄に『観測者A』。" },
+      { id: "P14", level: 2, title: "封鎖ファイル #14 / 鍵穴の規格", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], keywords: [], text: "鍵穴は古い軍用規格。現在の設備図には存在しない。" },
+      { id: "P15", level: 2, title: "封鎖ファイル #15 / 無音室の天井", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], keywords: ["石英塔"], text: "無音室の天井板に白線が一本。紫外線照射で『石英塔』の文字が浮かぶ。" },
+      { id: "P16", level: 2, title: "封鎖ファイル #16 / 音圧ログ", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], keywords: [], text: "無音状態のはずが、人の囁きに似た低周波を検出。波形は断続的。" },
+      { id: "P17", level: 2, title: "封鎖ファイル #17 / 黒潮境界", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], keywords: ["離岸流"], text: "黒い潮の境界線は地図に存在しない浅瀬へ接続。注記: 『離岸流を追跡せよ』。" },
+      { id: "P18", level: 2, title: "封鎖ファイル #18 / 濁流の組成", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], keywords: [], text: "濁流成分に金属粉末。付着元素は海底ケーブル由来と一致。" },
+
+      { id: "P19", level: 3, title: "深層資料 #19 / 観測者の報告", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], keywords: ["プロトコル7"], text: "観測者Aは報告を暗号化し、『プロトコル7以外で開封するな』と記した。" },
+      { id: "P20", level: 3, title: "深層資料 #20 / 欠落した署名", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], keywords: [], text: "署名は一部削除され、Aの次の文字だけが擦り切れている。" },
+      { id: "P21", level: 3, title: "深層資料 #21 / 石英塔座標", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], keywords: ["鏡像庭園"], text: "石英塔は地図上で反転座標にのみ現れる。付箋: 『鏡像庭園で会う』。" },
+      { id: "P22", level: 3, title: "深層資料 #22 / 塔内反響", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], keywords: [], text: "塔内部では声が遅れて返る。記録では話者が未来の語尾を先に発声。" },
+      { id: "P23", level: 3, title: "深層資料 #23 / 離岸流の果て", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["離岸流"], keywords: ["北緯35.6"], text: "離岸流の終点は座標データに置換される。数列末尾は『北緯35.6』を指す。" },
+
+      { id: "P24", level: 4, title: "監査外資料 #24 / 七番手順", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["プロトコル7"], keywords: ["最終認証"], text: "プロトコル7を実行すると監査網が再起動。最終行に『最終認証は未実施』。" },
+      { id: "P25", level: 4, title: "監査外資料 #25 / 庭園の中央", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["鏡像庭園"], keywords: ["紅い署名"], text: "鏡像庭園の中央碑文は左右対称ではない。裏面に『紅い署名』。" },
+      { id: "P26", level: 4, title: "監査外資料 #26 / 座標補正", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["北緯35.6"], keywords: ["最終認証"], text: "北緯35.6で受信した電文: 『最終認証は2つの証跡を要求』。" },
+      { id: "P27", level: 4, title: "監査外資料 #27 / 黒塗り回復", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["最終認証", "紅い署名"], keywords: [], text: "復元された黒塗り文書に最後のアクセスコードがある。残りは最上層ログへ。" },
+
+      { id: "P28", level: 5, title: "最終層ログ #28 / 認証前夜", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["最終認証"], keywords: [], text: "認証手順の直前、監査網の全ノードが同期。あなたのアクセスが唯一の例外。" },
+      { id: "P29", level: 5, title: "最終層ログ #29 / 署名照合", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["紅い署名"], keywords: [], text: "紅い署名は血液ではなく顔料。だが成分比率は人為的には再現不能。" },
+      { id: "P30", level: 5, title: "最終層ログ #30 / クリアレポート", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["最終認証", "紅い署名"], keywords: [], final: true, text: "ここまで到達した探索者へ。これで『波間の監査ログ』はクリアです。以下からXへクリア報告を投稿してください。" }
+    ];
+
+    const discovered = new Set(["P01", "P02", "P03", "P04", "P05", "P06"]);
+    let currentPageId = "P01";
+
+    const statusEl = document.getElementById("status");
+    const pageListEl = document.getElementById("page-list");
+    const viewerEl = document.getElementById("viewer");
+    const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("search-input");
+
+    const normalize = (s) => s.trim().toLowerCase();
+
+    function renderStatus() {
+      statusEl.textContent = `発見: ${discovered.size}/30ページ | 現在閲覧: ${currentPageId}`;
+    }
+
+    function levelText(level) {
+      return `Lv${level}`;
+    }
+
+    function renderList() {
+      const visiblePages = pages
+        .filter((p) => discovered.has(p.id))
+        .sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)));
+
+      pageListEl.innerHTML = "";
+
+      for (const p of visiblePages) {
+        const btn = document.createElement("button");
+        btn.className = "page-btn";
+        btn.type = "button";
+        btn.innerHTML = `
+          <div class="title-row">
+            <strong>${p.id} ${p.title}</strong>
+            <span class="badge">${levelText(p.level)}</span>
+          </div>
+          <div class="meta">難易度: ${p.difficulty} / 機密度: ${p.security}</div>
+        `;
+        btn.addEventListener("click", () => {
+          currentPageId = p.id;
+          renderViewer();
+          renderStatus();
+        });
+        pageListEl.appendChild(btn);
+      }
+    }
+
+    function renderViewer() {
+      const page = pages.find((p) => p.id === currentPageId);
+      if (!page) return;
+
+      const keywordPart = page.keywords && page.keywords.length
+        ? `<div class="keywords"><strong>発見キーワード:</strong> ${page.keywords.map((k) => `<span class="chip">${k}</span>`).join("")}</div>`
+        : "";
+
+      const finalLink = page.final
+        ? `<a class="x-report" href="https://x.com/intent/tweet?text=${encodeURIComponent("【ARGクリア】『波間の監査ログ』を踏破しました。#WebARG #波間の監査ログ")}" target="_blank" rel="noopener noreferrer">Xにクリア報告を投稿する</a>`
+        : "";
+
+      viewerEl.innerHTML = `
+        <h3>${page.id} ${page.title}</h3>
+        <div class="chips">
+          <span class="chip">${levelText(page.level)}</span>
+          <span class="chip">難易度: ${page.difficulty}</span>
+          <span class="chip">機密度: ${page.security}</span>
+        </div>
+        <p>${page.text}</p>
+        ${keywordPart}
+        ${finalLink}
+      `;
+    }
+
+    searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = normalize(searchInput.value);
+      if (!query) return;
+
+      const hitPages = pages.filter((p) =>
+        p.searchable &&
+        Array.isArray(p.searchTerms) &&
+        p.searchTerms.some((term) => normalize(term) === query)
+      );
+
+      if (hitPages.length === 0) {
+        viewerEl.innerHTML = `
+          <h3>検索結果: 0件</h3>
+          <p>一致する記録は見つかりませんでした。別のキーワードを試してください。</p>
+        `;
+        return;
+      }
+
+      for (const p of hitPages) {
+        discovered.add(p.id);
+      }
+
+      currentPageId = hitPages[0].id;
+      renderStatus();
+      renderList();
+      renderViewer();
+    });
+
+    renderStatus();
+    renderList();
+    renderViewer();
+  </script>
 </body>
 </html>
