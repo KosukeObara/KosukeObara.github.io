@@ -1,11 +1,235 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>プライバシーポリシー</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>深層記録群 // ARG探索アーカイブ</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090d;
+      --panel: #10161f;
+      --line: #263244;
+      --text: #d7e1ee;
+      --sub: #8fa4bf;
+      --accent: #58c6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: radial-gradient(circle at top, #131c2a 0%, var(--bg) 45%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    h1 { margin: 0; font-size: 1.15rem; letter-spacing: 0.08em; }
+    .status { color: var(--sub); font-size: 0.88rem; }
+    main { display: grid; grid-template-columns: 320px 1fr; gap: 16px; padding: 16px; }
+    .panel { background: color-mix(in srgb, var(--panel) 92%, black); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .panel h2 { margin: 0; font-size: 0.95rem; letter-spacing: 0.07em; color: #b4c6dd; padding: 12px 14px; border-bottom: 1px solid var(--line); background: #0c1119; }
+    .section { padding: 12px 14px; }
+    .search-box { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    input, button { background: #060a11; border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 10px 12px; font: inherit; }
+    button { cursor: pointer; background: #11263a; border-color: #2d4f72; }
+    button:hover { background: #17324d; }
+    .hint { margin-top: 10px; color: var(--sub); font-size: 0.82rem; line-height: 1.5; }
+    .list { max-height: 47vh; overflow: auto; display: flex; flex-direction: column; gap: 8px; }
+    .page-btn { width: 100%; text-align: left; border: 1px solid var(--line); background: #0a1018; padding: 10px; border-radius: 10px; display: grid; gap: 5px; }
+    .page-btn:hover { border-color: #496384; }
+    .title-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .badge { font-size: 0.72rem; color: #0a1118; background: var(--accent); border-radius: 999px; padding: 1px 8px; font-weight: 700; letter-spacing: 0.05em; white-space: nowrap; }
+    .meta { color: var(--sub); font-size: 0.8rem; }
+    .viewer { padding: 18px; min-height: 70vh; }
+    .viewer h3 { margin-top: 0; margin-bottom: 8px; font-size: 1.3rem; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; }
+    .chip { border: 1px solid #38526e; color: #97c6ef; border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; letter-spacing: 0.04em; }
+    .viewer p { line-height: 1.9; white-space: pre-wrap; }
+    .x-report { margin-top: 16px; display: inline-block; border: 1px solid #307fba; color: #96d8ff; text-decoration: none; border-radius: 10px; padding: 10px 12px; background: #092033; }
+    .x-report:hover { background: #0d2c46; }
+    .search-log { color: #8cc9ff; font-size: 0.8rem; margin-top: 8px; }
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      .list { max-height: 35vh; }
+      .viewer { min-height: 48vh; }
+    }
+  </style>
 </head>
 <body>
-  <h1>プライバシーポリシー</h1>
-  <p>このアプリは個人利用目的でPinterest APIを使用します。個人情報を収集・共有することはありません。</p>
+  <header>
+    <h1>深層記録群 // WEB ARG: 「波間の監査ログ」</h1>
+    <div class="status" id="status"></div>
+  </header>
+
+  <main>
+    <aside class="panel">
+      <h2>サイト内検索</h2>
+      <div class="section">
+        <form id="search-form" class="search-box">
+          <input id="search-input" type="text" placeholder="キーワードを入力" autocomplete="off" />
+          <button type="submit">検索</button>
+        </form>
+        <div class="hint">
+          30ページ中6ページのみ公開開始。<br />
+          <strong>キーワードは表示されません。</strong> 文書から読み取り、推理して検索してください。<br />
+          Lv0〜Lv2: 語句発見中心 / Lv3〜Lv5: 推理中心。
+        </div>
+        <div class="search-log" id="search-log">直近検索: なし</div>
+      </div>
+
+      <h2>発見済みページ</h2>
+      <div class="section list" id="page-list"></div>
+    </aside>
+
+    <section class="panel viewer" id="viewer"></section>
+  </main>
+
+  <script>
+    const pages = [
+      { id: "P01", level: 0, title: "公開ログ #01 / イントロダクション", security: "公開", difficulty: "易", searchable: false, text: "廃止された監査網『波間』へようこそ。\n削除済み記録を30ページ再構築した。\n最初に閲覧できるのは6ページのみ。" },
+      { id: "P02", level: 0, title: "公開ログ #02 / 港湾監視カメラ", security: "公開", difficulty: "易", searchable: false, text: "午前4時、岸壁で濡れていない『白い封筒』を持つ人物を確認。\n封蝋には半月紋。" },
+      { id: "P03", level: 0, title: "公開ログ #03 / 管制室の停止時計", security: "公開", difficulty: "易", searchable: false, text: "壁時計は天地逆転で03:17停止。\n担当者は報告欄に『逆さ時計』と記載。" },
+      { id: "P04", level: 0, title: "公開ログ #04 / 潜水ドローン断片", security: "公開", difficulty: "易", searchable: false, text: "深度計ログ最終値は9。\n音声断片:『深度9で視線を感じた』。" },
+      { id: "P05", level: 0, title: "公開ログ #05 / 観測メモ", security: "公開", difficulty: "易", searchable: false, text: "語句・時刻・座標が分散保存されている。\n単語同士を接続し、検索せよ。" },
+      { id: "P06", level: 0, title: "公開ログ #06 / 利用手順", security: "公開", difficulty: "易", searchable: false, text: "外部検索は無効化済み。\nこのサイト内検索のみで進行可能。" },
+
+      { id: "P07", level: 1, title: "隔離記録 #07 / 封筒裏面", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], text: "封筒裏面の擦れた墨書は『夜明けの鍵』。\nただし鍵の保管場所は別記録に隠蔽。" },
+      { id: "P08", level: 1, title: "隔離記録 #08 / 乾いた塩分", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], text: "封筒には潮の結晶がほぼ無い。\n海ではなく内陸保管を示唆。" },
+      { id: "P09", level: 1, title: "隔離記録 #09 / 停止時刻照合", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], text: "03:17に同時停止した施設名は『無音室』。\n音が消えた直後、通信が一瞬復帰。" },
+      { id: "P10", level: 1, title: "隔離記録 #10 / 逆配置の理由", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], text: "時計背面の刻印は正立させると読めない。\n逆置き前提の暗号板だった。" },
+      { id: "P11", level: 1, title: "隔離記録 #11 / 水中映像", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], text: "流体だけが逆走する異常潮流を確認。\nタグ名は『黒い潮』。" },
+      { id: "P12", level: 1, title: "隔離記録 #12 / 潮目の周期", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], text: "9分周期でノイズ消失。\n消失直後、座標電文が流入。" },
+
+      { id: "P13", level: 2, title: "封鎖ファイル #13 / 倉庫床下", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], text: "海霧倉庫床下から磁気カード。\n署名: 観測者A。" },
+      { id: "P14", level: 2, title: "封鎖ファイル #14 / 鍵穴規格", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], text: "鍵穴は廃止規格。現行図面に存在しない。\n管理台帳の欠番は7。" },
+      { id: "P15", level: 2, title: "封鎖ファイル #15 / 無音室の痕跡", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], text: "紫外線照射で天井に二文字: 石英塔。\n記録末尾に『塔は地図で反転する』。" },
+      { id: "P16", level: 2, title: "封鎖ファイル #16 / 音圧ログ", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], text: "沈黙下で低周波囁き。\n語頭のみ抽出すると『い・そ・う』。" },
+      { id: "P17", level: 2, title: "封鎖ファイル #17 / 潮境界", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], text: "境界線の先は浅瀬ではなく落差。\n追跡語: 離岸流。" },
+      { id: "P18", level: 2, title: "封鎖ファイル #18 / 濁流成分", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], text: "金属粉は海底ケーブル由来。\n送信元コード末尾: 35.6。" },
+
+      { id: "P19", level: 3, title: "深層資料 #19 / A報告書", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], text: "Aは『七番手順以外で封を切るな』と記す。\nここで手順を語として打つのは短絡。" },
+      { id: "P20", level: 3, title: "深層資料 #20 / 欠落署名", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], text: "署名はAの次が擦れて消失。\n同頁の余白メモ:『像を映して読む』。" },
+      { id: "P21", level: 3, title: "深層資料 #21 / 塔座標", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], text: "塔の座標は通常地図に出ない。\n鏡像投影したときだけ庭園が現れる。" },
+      { id: "P22", level: 3, title: "深層資料 #22 / 先行する語尾", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], text: "記録音声は語尾が先に来る。\n『さがい』という断片が反復。逆順を試せ。" },
+      { id: "P23", level: 3, title: "深層資料 #23 / 流末座標", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["離岸流"], text: "流末データは北緯35.6。\n付記:『座標は場所名ではなく事件名の導線』。" },
+      { id: "P24", level: 3, title: "深層資料 #24 / 値の欠番", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["離岸流"], text: "通信列の7番目だけが空白。\n欠番・鏡像・逆順を同時適用しろ。" },
+
+      { id: "P25", level: 4, title: "監査外資料 #25 / 手順の再解釈", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["位相差"], text: "七番手順は名称ではなく現象を指す。\n時刻差が意味を持つ。" },
+      { id: "P26", level: 4, title: "監査外資料 #26 / 庭園碑文", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["鏡像庭園"], text: "碑文は反転で『潮位』が読める。\n正面からは意味不明な線群。" },
+      { id: "P27", level: 4, title: "監査外資料 #27 / 逆順復号", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["位相差", "鏡像庭園"], text: "『さがい』を逆順にしても不十分。\n別記録の欠番7を埋めると『反位相』へ収束。" },
+      { id: "P28", level: 4, title: "監査外資料 #28 / 座標注釈", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["35.6", "北緯35.6"], text: "35.6は事故当夜の潮位反転ピーク時刻の縮約。\n位置ではなく事象コード。" },
+
+      { id: "P29", level: 5, title: "最終層ログ #29 / 断片統合", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["反位相", "潮位"], text: "これまでの断片:\n- 逆転時計\n- 鏡像座標\n- 欠番7\n- 黒い潮\n\n単語を並べるだけでは最終語に届かない。\n『何が起きた事件か』を答えろ。" },
+      { id: "P30", level: 5, title: "最終層ログ #30 / クリアレポート", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["潮位反転事故"], final: true, text: "正解。事件名『潮位反転事故』を特定。\nあなたは全体像の再構築に成功した。\n以下からXへクリア報告を投稿してください。" }
+    ];
+
+    const discovered = new Set(["P01", "P02", "P03", "P04", "P05", "P06"]);
+    let currentPageId = "P01";
+
+    const statusEl = document.getElementById("status");
+    const pageListEl = document.getElementById("page-list");
+    const viewerEl = document.getElementById("viewer");
+    const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("search-input");
+    const searchLogEl = document.getElementById("search-log");
+
+    const normalize = (s) => s.trim().toLowerCase();
+
+    function renderStatus() {
+      statusEl.textContent = `発見: ${discovered.size}/30ページ | 現在閲覧: ${currentPageId}`;
+    }
+
+    function levelText(level) {
+      return `Lv${level}`;
+    }
+
+    function renderList() {
+      const visiblePages = pages
+        .filter((p) => discovered.has(p.id))
+        .sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)));
+
+      pageListEl.innerHTML = "";
+      for (const p of visiblePages) {
+        const btn = document.createElement("button");
+        btn.className = "page-btn";
+        btn.type = "button";
+        btn.innerHTML = `
+          <div class="title-row">
+            <strong>${p.id} ${p.title}</strong>
+            <span class="badge">${levelText(p.level)}</span>
+          </div>
+          <div class="meta">難易度: ${p.difficulty} / 機密度: ${p.security}</div>
+        `;
+        btn.addEventListener("click", () => {
+          currentPageId = p.id;
+          renderViewer();
+          renderStatus();
+        });
+        pageListEl.appendChild(btn);
+      }
+    }
+
+    function renderViewer() {
+      const page = pages.find((p) => p.id === currentPageId);
+      if (!page) return;
+
+      const finalLink = page.final
+        ? `<a class="x-report" href="https://x.com/intent/tweet?text=${encodeURIComponent("【ARGクリア】『波間の監査ログ』の事件名を特定しました。#WebARG #波間の監査ログ")}" target="_blank" rel="noopener noreferrer">Xにクリア報告を投稿する</a>`
+        : "";
+
+      viewerEl.innerHTML = `
+        <h3>${page.id} ${page.title}</h3>
+        <div class="chips">
+          <span class="chip">${levelText(page.level)}</span>
+          <span class="chip">難易度: ${page.difficulty}</span>
+          <span class="chip">機密度: ${page.security}</span>
+        </div>
+        <p>${page.text}</p>
+        ${finalLink}
+      `;
+    }
+
+    searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const raw = searchInput.value;
+      const query = normalize(raw);
+      if (!query) return;
+
+      searchLogEl.textContent = `直近検索: ${raw}`;
+
+      const hitPages = pages.filter((p) =>
+        p.searchable &&
+        Array.isArray(p.searchTerms) &&
+        p.searchTerms.some((term) => normalize(term) === query)
+      );
+
+      if (hitPages.length === 0) {
+        viewerEl.innerHTML = `
+          <h3>検索結果: 0件</h3>
+          <p>一致する記録は見つかりませんでした。文中の語句、逆順、鏡像、欠番に注目してください。</p>
+        `;
+        return;
+      }
+
+      for (const p of hitPages) discovered.add(p.id);
+
+      currentPageId = hitPages[0].id;
+      renderStatus();
+      renderList();
+      renderViewer();
+    });
+
+    renderStatus();
+    renderList();
+    renderViewer();
+  </script>
 </body>
 </html>
