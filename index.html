@@ -3,374 +3,215 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>深層記録群 // ARG探索アーカイブ</title>
+  <title>ぷにぷにインフレTD</title>
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #07090d;
-      --panel: #10161f;
-      --line: #263244;
-      --text: #d7e1ee;
-      --sub: #8fa4bf;
-      --accent: #58c6ff;
-      --danger: #ff6978;
-      --ok: #83f0c6;
+      color-scheme: light;
+      --cream: #fff7df;
+      --mint: #baf3d2;
+      --sky: #b8e9ff;
+      --pink: #ffb8cf;
+      --ink: #3e3342;
+      --panel: rgba(255, 255, 255, 0.78);
+      --gold: #ffd45f;
+      --leaf: #69c780;
+      --danger: #ff7c7c;
+      --purple: #9d85ff;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Inter", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-      background: radial-gradient(circle at top, #131c2a 0%, var(--bg) 45%);
-      color: var(--text);
       min-height: 100vh;
+      overflow: hidden;
+      font-family: "Nunito", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,255,255,.9) 0 8%, transparent 26%),
+        radial-gradient(circle at 85% 15%, rgba(255,210,236,.95) 0 10%, transparent 24%),
+        linear-gradient(135deg, #d8f8ff 0%, #fff3ca 48%, #ffe2ef 100%);
+    }
+
+    .app {
+      width: min(1200px, 100vw);
+      height: 100vh;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+    }
+
+    header, .hud-card, .help, .tower-card, .toast {
+      background: var(--panel);
+      border: 3px solid rgba(255,255,255,.9);
+      box-shadow: 0 16px 32px rgba(87, 105, 136, .18), inset 0 -4px 0 rgba(88, 75, 70, .08);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
     }
 
     header {
-      border-bottom: 1px solid var(--line);
-      padding: 18px 22px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.15rem;
-      letter-spacing: 0.08em;
-    }
-
-    .status {
-      color: var(--sub);
-      font-size: 0.88rem;
-    }
-
-    main {
-      display: grid;
-      grid-template-columns: 320px 1fr;
       gap: 16px;
-      padding: 16px;
     }
 
-    .panel {
-      background: color-mix(in srgb, var(--panel) 92%, black);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      overflow: hidden;
-    }
+    h1 { margin: 0; font-size: clamp(1.2rem, 3vw, 2rem); letter-spacing: .04em; }
+    .subtitle { margin: 4px 0 0; font-size: .88rem; opacity: .72; }
 
-    .panel h2 {
-      margin: 0;
-      font-size: 0.95rem;
-      letter-spacing: 0.07em;
-      color: #b4c6dd;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      background: #0c1119;
-    }
-
-    .section { padding: 12px 14px; }
-
-    .search-box {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-    }
-
-    input, button {
-      background: #060a11;
-      border: 1px solid var(--line);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font: inherit;
-    }
-
+    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
     button {
+      border: 0;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 900;
       cursor: pointer;
-      background: #11263a;
-      border-color: #2d4f72;
-    }
-
-    button:hover { background: #17324d; }
-
-    .hint {
-      margin-top: 10px;
-      color: var(--sub);
-      font-size: 0.82rem;
-      line-height: 1.5;
-    }
-
-    .list {
-      max-height: 55vh;
-      overflow: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .page-btn {
-      width: 100%;
-      text-align: left;
-      border: 1px solid var(--line);
-      background: #0a1018;
-      padding: 10px;
-      border-radius: 10px;
-      display: grid;
-      gap: 5px;
-    }
-
-    .page-btn:hover { border-color: #496384; }
-
-    .title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .badge {
-      font-size: 0.72rem;
-      color: #0a1118;
-      background: var(--accent);
       border-radius: 999px;
-      padding: 1px 8px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
+      padding: 10px 16px;
+      background: linear-gradient(#fff, #ffe9a8);
+      box-shadow: 0 6px 0 #dfab45, 0 12px 20px rgba(120, 78, 26, .16);
+      transform: translateY(0);
+      transition: transform .08s, box-shadow .08s, filter .15s;
     }
+    button:hover { filter: brightness(1.04); }
+    button:active { transform: translateY(4px); box-shadow: 0 2px 0 #dfab45; }
 
-    .meta { color: var(--sub); font-size: 0.8rem; }
-
-    .viewer {
-      padding: 18px;
-      min-height: 70vh;
+    .game-wrap { display: grid; grid-template-columns: 1fr 280px; gap: 12px; min-height: 0; }
+    .stage {
+      position: relative;
+      min-width: 0;
+      border-radius: 34px;
+      overflow: hidden;
+      box-shadow: 0 24px 50px rgba(68, 96, 120, .22);
+      background: #aee8b5;
     }
+    canvas { display: block; width: 100%; height: 100%; image-rendering: auto; cursor: crosshair; }
 
-    .viewer h3 {
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: 1.3rem;
-    }
+    aside { display: grid; align-content: start; gap: 10px; overflow: auto; padding-right: 2px; }
+    .hud-card { padding: 14px; }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .stat { background: rgba(255,255,255,.6); border-radius: 18px; padding: 9px; text-align: center; }
+    .stat b { display: block; font-size: 1.18rem; }
+    .bar { height: 16px; border-radius: 999px; background: rgba(74, 65, 85, .12); overflow: hidden; margin-top: 8px; }
+    .bar > i { display: block; height: 100%; width: 0%; border-radius: inherit; background: linear-gradient(90deg, #74dc8b, #ffd45f, #ff8bc0); transition: width .2s; }
 
-    .chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 8px 0 14px;
-    }
+    .tower-card { padding: 12px; display: grid; gap: 8px; }
+    .tower-card.selected { outline: 4px solid rgba(255, 212, 95, .9); }
+    .tower-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 900; }
+    .blob { width: 34px; height: 34px; border-radius: 42% 58% 55% 45%; display: inline-grid; place-items: center; box-shadow: inset 0 -5px 0 rgba(0,0,0,.08); }
+    .small { font-size: .82rem; opacity: .72; line-height: 1.45; }
+    .help { padding: 13px; font-size: .86rem; line-height: 1.55; }
 
-    .chip {
-      border: 1px solid #38526e;
-      color: #97c6ef;
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
-    }
+    .toast { position: absolute; left: 18px; bottom: 18px; padding: 12px 16px; font-weight: 900; pointer-events: none; opacity: 0; transform: translateY(12px); transition: .25s; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .floating { position: absolute; pointer-events: none; font-weight: 1000; color: #fff; text-shadow: 0 3px 0 rgba(72, 45, 72, .28); animation: floatUp 700ms ease-out forwards; }
+    @keyframes floatUp { to { transform: translateY(-46px) scale(1.16); opacity: 0; } }
 
-    .viewer p { line-height: 1.8; }
-
-    .keywords {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px dashed #304258;
-    }
-
-    .keywords strong { color: var(--ok); }
-
-    .x-report {
-      margin-top: 16px;
-      display: inline-block;
-      border: 1px solid #307fba;
-      color: #96d8ff;
-      text-decoration: none;
-      border-radius: 10px;
-      padding: 10px 12px;
-      background: #092033;
-    }
-
-    .x-report:hover { background: #0d2c46; }
-
-    @media (max-width: 900px) {
-      main { grid-template-columns: 1fr; }
-      .list { max-height: 38vh; }
-      .viewer { min-height: 48vh; }
+    @media (max-width: 880px) {
+      body { overflow: auto; }
+      .app { height: auto; min-height: 100vh; }
+      .game-wrap { grid-template-columns: 1fr; }
+      .stage { height: 62vh; min-height: 460px; }
+      aside { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .help { grid-column: 1 / -1; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>深層記録群 // WEB ARG: 「波間の監査ログ」</h1>
-    <div class="status" id="status"></div>
-  </header>
-
-  <main>
-    <aside class="panel">
-      <h2>サイト内検索</h2>
-      <div class="section">
-        <form id="search-form" class="search-box">
-          <input id="search-input" type="text" placeholder="キーワードを入力" autocomplete="off" />
-          <button type="submit">検索</button>
-        </form>
-        <div class="hint">
-          閲覧可能ページ: 30ページ中6ページから開始。<br />
-          初期公開はすべて <strong>Lv0</strong>。本文に3つの初期キーワードが埋め込まれています。
-        </div>
+  <div class="app">
+    <header>
+      <div>
+        <h1>🍡 ぷにぷにインフレTD</h1>
+        <p class="subtitle">かわいい敵をぷちぷち倒して、数字がどんどん大きくなる見下ろしタワーディフェンス</p>
       </div>
+      <div class="top-actions">
+        <button id="startBtn">ウェーブ開始</button>
+        <button id="speedBtn">速度 x1</button>
+        <button id="resetBtn">リセット</button>
+      </div>
+    </header>
 
-      <h2>発見済みページ</h2>
-      <div class="section list" id="page-list"></div>
-    </aside>
-
-    <section class="panel viewer" id="viewer"></section>
-  </main>
+    <div class="game-wrap">
+      <section class="stage" id="stage">
+        <canvas id="game" width="900" height="620" aria-label="タワーディフェンスゲーム"></canvas>
+        <div class="toast" id="toast">いいね！</div>
+      </section>
+      <aside>
+        <div class="hud-card">
+          <div class="stats">
+            <div class="stat">🍬 キャンディ<b id="money">0</b></div>
+            <div class="stat">💖 ハート<b id="lives">0</b></div>
+            <div class="stat">🌊 ウェーブ<b id="wave">0</b></div>
+            <div class="stat">✨ DPS<b id="dps">0</b></div>
+          </div>
+          <div class="bar"><i id="waveBar"></i></div>
+        </div>
+        <div id="towerList"></div>
+        <div class="help">
+          <b>遊び方</b><br />
+          タワーを選んで芝生をクリック。敵を倒すたびにキャンディが弾け、ウェーブごとに報酬・ダメージ・敵HPがインフレします。既存タワーをクリックすると強化できます。
+        </div>
+      </aside>
+    </div>
+  </div>
 
   <script>
-    const pages = [
-      { id: "P01", level: 0, title: "公開ログ #01 / イントロダクション", security: "公開", difficulty: "易", searchable: false, keywords: [], text: "ようこそ。あなたは廃止された調査網『波間』にアクセスしました。ここには削除された監査記録の残滓が眠っています。" },
-      { id: "P02", level: 0, title: "公開ログ #02 / 港湾監視カメラ", security: "公開", difficulty: "易", searchable: false, keywords: ["白い封筒"], text: "午前4時、岸壁の監視映像に不自然な人物。手にしていたのは濡れていない『白い封筒』だった。封筒の宛名は消されている。" },
-      { id: "P03", level: 0, title: "公開ログ #03 / 管制室の停止時計", security: "公開", difficulty: "易", searchable: false, keywords: ["逆さ時計"], text: "中央管制室で見つかった壁時計はなぜか天地が逆だった。時刻は03:17で停止。報告書には『逆さ時計』とだけ赤字で記される。" },
-      { id: "P04", level: 0, title: "公開ログ #04 / 潜水ドローン断片", security: "公開", difficulty: "易", searchable: false, keywords: ["深度9"], text: "壊れた潜水ドローンの最終音声にはノイズとともに『深度9で何かが見ている』という声が残されていた。" },
-      { id: "P05", level: 0, title: "公開ログ #05 / 観測メモ", security: "公開", difficulty: "易", searchable: false, keywords: [], text: "調査対象は文書、音声、映像に分散。単語同士をつなげることで未公開セクションへの入口が開く。" },
-      { id: "P06", level: 0, title: "公開ログ #06 / 利用手順", security: "公開", difficulty: "易", searchable: false, keywords: [], text: "このサイトは外部検索エンジンと切り離されている。ページ発見には右側のサイト内検索のみ有効。" },
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const stage = document.getElementById("stage");
+    const ui = {
+      money: document.getElementById("money"), lives: document.getElementById("lives"), wave: document.getElementById("wave"),
+      dps: document.getElementById("dps"), waveBar: document.getElementById("waveBar"), toast: document.getElementById("toast"),
+      start: document.getElementById("startBtn"), speed: document.getElementById("speedBtn"), reset: document.getElementById("resetBtn"), towerList: document.getElementById("towerList")
+    };
 
-      { id: "P07", level: 1, title: "隔離記録 #07 / 封筒の送り主", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], keywords: ["夜明けの鍵"], text: "封筒の裏面に微細な刻印。解読すると『夜明けの鍵は海霧倉庫に』とある。" },
-      { id: "P08", level: 1, title: "隔離記録 #08 / 封筒の紙質", security: "内部", difficulty: "中", searchable: true, searchTerms: ["白い封筒"], keywords: [], text: "紙繊維は一般流通品ではない。塩化ナトリウム結晶が異常に少なく、陸上保管が示唆される。" },
-      { id: "P09", level: 1, title: "隔離記録 #09 / 止まった時刻", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], keywords: ["無音室"], text: "03:17は音響実験棟で電力が落ちた時刻と一致。備考欄: 『無音室に入るな』。" },
-      { id: "P10", level: 1, title: "隔離記録 #10 / 逆さ設置の意図", security: "内部", difficulty: "中", searchable: true, searchTerms: ["逆さ時計"], keywords: [], text: "時計を逆さにすると、背面刻印が正位置で読める。番号列は鍵束の並び順だった。" },
-      { id: "P11", level: 1, title: "隔離記録 #11 / 深度9の映像", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], keywords: ["黒い潮"], text: "深度9の映像に黒い濁流。潮流計は停止していたが、流体だけが逆走していた。" },
-      { id: "P12", level: 1, title: "隔離記録 #12 / 潮目の異常", security: "内部", difficulty: "中", searchable: true, searchTerms: ["深度9"], keywords: [], text: "同地点の潮目に周期性あり。9分ごとに通信ノイズが消える。" },
-
-      { id: "P13", level: 2, title: "封鎖ファイル #13 / 倉庫の床下", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], keywords: ["観測者A"], text: "海霧倉庫の床下から磁気カード発見。署名欄に『観測者A』。" },
-      { id: "P14", level: 2, title: "封鎖ファイル #14 / 鍵穴の規格", security: "機密", difficulty: "高", searchable: true, searchTerms: ["夜明けの鍵"], keywords: [], text: "鍵穴は古い軍用規格。現在の設備図には存在しない。" },
-      { id: "P15", level: 2, title: "封鎖ファイル #15 / 無音室の天井", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], keywords: ["石英塔"], text: "無音室の天井板に白線が一本。紫外線照射で『石英塔』の文字が浮かぶ。" },
-      { id: "P16", level: 2, title: "封鎖ファイル #16 / 音圧ログ", security: "機密", difficulty: "高", searchable: true, searchTerms: ["無音室"], keywords: [], text: "無音状態のはずが、人の囁きに似た低周波を検出。波形は断続的。" },
-      { id: "P17", level: 2, title: "封鎖ファイル #17 / 黒潮境界", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], keywords: ["離岸流"], text: "黒い潮の境界線は地図に存在しない浅瀬へ接続。注記: 『離岸流を追跡せよ』。" },
-      { id: "P18", level: 2, title: "封鎖ファイル #18 / 濁流の組成", security: "機密", difficulty: "高", searchable: true, searchTerms: ["黒い潮"], keywords: [], text: "濁流成分に金属粉末。付着元素は海底ケーブル由来と一致。" },
-
-      { id: "P19", level: 3, title: "深層資料 #19 / 観測者の報告", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], keywords: ["プロトコル7"], text: "観測者Aは報告を暗号化し、『プロトコル7以外で開封するな』と記した。" },
-      { id: "P20", level: 3, title: "深層資料 #20 / 欠落した署名", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["観測者A"], keywords: [], text: "署名は一部削除され、Aの次の文字だけが擦り切れている。" },
-      { id: "P21", level: 3, title: "深層資料 #21 / 石英塔座標", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], keywords: ["鏡像庭園"], text: "石英塔は地図上で反転座標にのみ現れる。付箋: 『鏡像庭園で会う』。" },
-      { id: "P22", level: 3, title: "深層資料 #22 / 塔内反響", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["石英塔"], keywords: [], text: "塔内部では声が遅れて返る。記録では話者が未来の語尾を先に発声。" },
-      { id: "P23", level: 3, title: "深層資料 #23 / 離岸流の果て", security: "最重要", difficulty: "難", searchable: true, searchTerms: ["離岸流"], keywords: ["北緯35.6"], text: "離岸流の終点は座標データに置換される。数列末尾は『北緯35.6』を指す。" },
-
-      { id: "P24", level: 4, title: "監査外資料 #24 / 七番手順", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["プロトコル7"], keywords: ["最終認証"], text: "プロトコル7を実行すると監査網が再起動。最終行に『最終認証は未実施』。" },
-      { id: "P25", level: 4, title: "監査外資料 #25 / 庭園の中央", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["鏡像庭園"], keywords: ["紅い署名"], text: "鏡像庭園の中央碑文は左右対称ではない。裏面に『紅い署名』。" },
-      { id: "P26", level: 4, title: "監査外資料 #26 / 座標補正", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["北緯35.6"], keywords: ["最終認証"], text: "北緯35.6で受信した電文: 『最終認証は2つの証跡を要求』。" },
-      { id: "P27", level: 4, title: "監査外資料 #27 / 黒塗り回復", security: "特級", difficulty: "極難", searchable: true, searchTerms: ["最終認証", "紅い署名"], keywords: [], text: "復元された黒塗り文書に最後のアクセスコードがある。残りは最上層ログへ。" },
-
-      { id: "P28", level: 5, title: "最終層ログ #28 / 認証前夜", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["最終認証"], keywords: [], text: "認証手順の直前、監査網の全ノードが同期。あなたのアクセスが唯一の例外。" },
-      { id: "P29", level: 5, title: "最終層ログ #29 / 署名照合", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["紅い署名"], keywords: [], text: "紅い署名は血液ではなく顔料。だが成分比率は人為的には再現不能。" },
-      { id: "P30", level: 5, title: "最終層ログ #30 / クリアレポート", security: "Ω機密", difficulty: "終局", searchable: true, searchTerms: ["最終認証", "紅い署名"], keywords: [], final: true, text: "ここまで到達した探索者へ。これで『波間の監査ログ』はクリアです。以下からXへクリア報告を投稿してください。" }
+    const path = [{x:-40,y:315},{x:105,y:315},{x:105,y:120},{x:315,y:120},{x:315,y:500},{x:545,y:500},{x:545,y:210},{x:760,y:210},{x:760,y:410},{x:940,y:410}];
+    const towerTypes = [
+      { id:"marsh", name:"マシュマロ砲", icon:"☁️", color:"#fff", cost:40, dmg:9, rate:.85, range:112, desc:"ふわっと連射。安くて気持ちいい基本砲台。" },
+      { id:"berry", name:"ベリー爆弾", icon:"🍓", color:"#ff85aa", cost:115, dmg:32, rate:1.35, range:128, splash:54, desc:"ぽんっと範囲攻撃。群れをまとめて弾けさせる。" },
+      { id:"star", name:"スター飴レーザー", icon:"⭐", color:"#ffe36d", cost:260, dmg:95, rate:.55, range:160, desc:"高火力で数字が跳ねるインフレ担当。" }
     ];
 
-    const discovered = new Set(["P01", "P02", "P03", "P04", "P05", "P06"]);
-    let currentPageId = "P01";
+    let state, last = performance.now(), selected = towerTypes[0], speed = 1;
+    const fmt = n => n >= 1e9 ? (n/1e9).toFixed(1)+"B" : n >= 1e6 ? (n/1e6).toFixed(1)+"M" : n >= 1e3 ? (n/1e3).toFixed(1)+"K" : Math.floor(n);
+    const dist = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
+    const inflate = w => Math.pow(1.38, w-1);
 
-    const statusEl = document.getElementById("status");
-    const pageListEl = document.getElementById("page-list");
-    const viewerEl = document.getElementById("viewer");
-    const searchForm = document.getElementById("search-form");
-    const searchInput = document.getElementById("search-input");
+    function reset(){ state={money:130,lives:20,wave:0,enemies:[],towers:[],shots:[],pops:[],spawning:false,spawnLeft:0,spawnTimer:0,kills:0,totalDmg:0,completedWave:0}; toast("ぷにぷに防衛、開始！"); }
+    function toast(text){ ui.toast.textContent=text; ui.toast.classList.add("show"); clearTimeout(toast.t); toast.t=setTimeout(()=>ui.toast.classList.remove("show"),1200); }
 
-    const normalize = (s) => s.trim().toLowerCase();
+    function renderTowerCards(){ ui.towerList.innerHTML=""; towerTypes.forEach(t=>{ const card=document.createElement("button"); card.className="tower-card"+(selected.id===t.id?" selected":""); card.innerHTML=`<div class="tower-head"><span><span class="blob" style="background:${t.color}">${t.icon}</span> ${t.name}</span><b>🍬${t.cost}</b></div><div class="small">${t.desc}<br>威力 ${t.dmg} / 範囲 ${t.range}</div>`; card.onclick=()=>{selected=t; renderTowerCards();}; ui.towerList.appendChild(card); }); }
 
-    function renderStatus() {
-      statusEl.textContent = `発見: ${discovered.size}/30ページ | 現在閲覧: ${currentPageId}`;
+    function startWave(){ if(state.spawning || state.enemies.length) return; state.wave++; state.spawnLeft=12+state.wave*5; state.spawnTimer=0; state.spawning=true; toast(`ウェーブ${state.wave}: HP x${inflate(state.wave).toFixed(1)}!`); }
+    function spawnEnemy(){ const hp=(32+state.wave*18)*inflate(state.wave); state.enemies.push({x:path[0].x,y:path[0].y,i:0,hp,maxHp:hp,speed:44+state.wave*2,r:15+Math.min(12,state.wave),reward:(10+state.wave*3)*inflate(state.wave)*.7,hue:(state.wave*36+state.spawnLeft*18)%360}); }
+
+    function update(dt){ dt*=speed; if(state.spawning){ state.spawnTimer-=dt; if(state.spawnTimer<=0 && state.spawnLeft>0){ spawnEnemy(); state.spawnLeft--; state.spawnTimer=Math.max(.13,.62-state.wave*.025); } if(state.spawnLeft<=0) state.spawning=false; }
+      state.enemies.forEach(e=>{ let target=path[e.i+1]; if(!target) return; const d=Math.hypot(target.x-e.x,target.y-e.y), step=e.speed*dt; if(d<=step){ e.x=target.x; e.y=target.y; e.i++; if(e.i>=path.length-1){ e.dead=true; state.lives--; pop(e.x,e.y,"💔", "#ff6e86"); }} else { e.x+=(target.x-e.x)/d*step; e.y+=(target.y-e.y)/d*step; } });
+      state.towers.forEach(t=>{ t.cool-=dt; const target=state.enemies.filter(e=>!e.dead && dist(t,e)<t.range).sort((a,b)=>b.i-a.i || b.x-a.x)[0]; if(target && t.cool<=0){ t.cool=t.type.rate/Math.sqrt(t.level); const dmg=t.type.dmg*Math.pow(1.72,t.level-1)*Math.pow(1.16,state.wave); target.hp-=dmg; state.totalDmg+=dmg; state.shots.push({x:t.x,y:t.y,tx:target.x,ty:target.y,life:.16,color:t.type.color}); if(t.type.splash){ state.enemies.forEach(e=>{ if(e!==target && !e.dead && dist(e,target)<t.type.splash){ e.hp-=dmg*.45; state.totalDmg+=dmg*.45; }}); } if(target.hp<=0 && !target.dead){ target.dead=true; state.money+=target.reward; state.kills++; pop(target.x,target.y,"+"+fmt(target.reward), "#fff"); } } });
+      state.enemies=state.enemies.filter(e=>!e.dead); state.shots.forEach(s=>s.life-=dt); state.shots=state.shots.filter(s=>s.life>0); state.pops.forEach(p=>{p.life-=dt;p.y-=40*dt;}); state.pops=state.pops.filter(p=>p.life>0);
+      if(!state.spawning && !state.enemies.length && state.wave>0 && state.completedWave !== state.wave){ const bonus=25*Math.pow(1.55,state.wave); state.money+=bonus; pop(450,70,"WAVE BONUS +"+fmt(bonus),"#ff7bb8"); state.completedWave = state.wave; if(state.lives>0) toast("全消し！次はもっとインフレ！"); state.spawning=null; }
+      if(state.spawning===null && state.enemies.length===0) state.spawning=false;
     }
 
-    function levelText(level) {
-      return `Lv${level}`;
+    function pop(x,y,text,color){ state.pops.push({x,y,text,color,life:.8}); const el=document.createElement("div"); el.className="floating"; el.textContent=text; el.style.left=(x/canvas.width*stage.clientWidth)+"px"; el.style.top=(y/canvas.height*stage.clientHeight)+"px"; stage.appendChild(el); setTimeout(()=>el.remove(),720); }
+
+    function draw(){ ctx.clearRect(0,0,900,620); ctx.fillStyle="#aee8b5"; ctx.fillRect(0,0,900,620); for(let x=0;x<900;x+=60) for(let y=0;y<620;y+=60){ ctx.fillStyle=(x+y)%120?"rgba(255,255,255,.11)":"rgba(105,199,128,.13)"; ctx.beginPath(); ctx.arc(x+24,y+24,4,0,7); ctx.fill(); }
+      ctx.lineCap="round"; ctx.lineJoin="round"; ctx.lineWidth=58; ctx.strokeStyle="#f4cf91"; ctx.beginPath(); path.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke(); ctx.lineWidth=38; ctx.strokeStyle="#ffe4aa"; ctx.stroke();
+      state.towers.forEach(t=>{ ctx.fillStyle="rgba(255,255,255,.22)"; ctx.beginPath(); ctx.arc(t.x,t.y,t.range,0,7); ctx.fill(); ctx.fillStyle=t.type.color; ctx.beginPath(); ctx.roundRect(t.x-22,t.y-22,44,44,16); ctx.fill(); ctx.fillStyle="#3e3342"; ctx.font="22px sans-serif"; ctx.textAlign="center"; ctx.fillText(t.type.icon,t.x,t.y+8); ctx.font="900 13px sans-serif"; ctx.fillText("Lv"+t.level,t.x,t.y+36); });
+      state.enemies.forEach(e=>{ ctx.fillStyle=`hsl(${e.hue} 84% 72%)`; ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,7); ctx.fill(); ctx.fillStyle="rgba(0,0,0,.5)"; ctx.beginPath(); ctx.arc(e.x-5,e.y-3,2.4,0,7); ctx.arc(e.x+6,e.y-3,2.4,0,7); ctx.fill(); ctx.fillRect(e.x-e.r,e.y-e.r-11,e.r*2,5); ctx.fillStyle="#74e38b"; ctx.fillRect(e.x-e.r,e.y-e.r-11,e.r*2*Math.max(0,e.hp/e.maxHp),5); });
+      state.shots.forEach(s=>{ ctx.strokeStyle=s.color; ctx.lineWidth=8*s.life/.16; ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(s.tx,s.ty); ctx.stroke(); });
+      state.pops.forEach(p=>{ ctx.globalAlpha=Math.max(0,p.life/.8); ctx.fillStyle=p.color; ctx.font="900 22px sans-serif"; ctx.textAlign="center"; ctx.fillText(p.text,p.x,p.y); ctx.globalAlpha=1; });
     }
 
-    function renderList() {
-      const visiblePages = pages
-        .filter((p) => discovered.has(p.id))
-        .sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)));
+    function syncUI(){ ui.money.textContent=fmt(state.money); ui.lives.textContent=state.lives; ui.wave.textContent=state.wave; ui.dps.textContent=fmt(state.totalDmg/Math.max(1, performance.now()/1000)); const total=12+Math.max(1,state.wave)*5; ui.waveBar.style.width=(state.spawning ? (1-state.spawnLeft/total)*100 : state.enemies.length?75:0)+"%"; }
+    function loop(now){ update(Math.min(.05,(now-last)/1000)); draw(); syncUI(); last=now; requestAnimationFrame(loop); }
 
-      pageListEl.innerHTML = "";
-
-      for (const p of visiblePages) {
-        const btn = document.createElement("button");
-        btn.className = "page-btn";
-        btn.type = "button";
-        btn.innerHTML = `
-          <div class="title-row">
-            <strong>${p.id} ${p.title}</strong>
-            <span class="badge">${levelText(p.level)}</span>
-          </div>
-          <div class="meta">難易度: ${p.difficulty} / 機密度: ${p.security}</div>
-        `;
-        btn.addEventListener("click", () => {
-          currentPageId = p.id;
-          renderViewer();
-          renderStatus();
-        });
-        pageListEl.appendChild(btn);
-      }
-    }
-
-    function renderViewer() {
-      const page = pages.find((p) => p.id === currentPageId);
-      if (!page) return;
-
-      const keywordPart = page.keywords && page.keywords.length
-        ? `<div class="keywords"><strong>発見キーワード:</strong> ${page.keywords.map((k) => `<span class="chip">${k}</span>`).join("")}</div>`
-        : "";
-
-      const finalLink = page.final
-        ? `<a class="x-report" href="https://x.com/intent/tweet?text=${encodeURIComponent("【ARGクリア】『波間の監査ログ』を踏破しました。#WebARG #波間の監査ログ")}" target="_blank" rel="noopener noreferrer">Xにクリア報告を投稿する</a>`
-        : "";
-
-      viewerEl.innerHTML = `
-        <h3>${page.id} ${page.title}</h3>
-        <div class="chips">
-          <span class="chip">${levelText(page.level)}</span>
-          <span class="chip">難易度: ${page.difficulty}</span>
-          <span class="chip">機密度: ${page.security}</span>
-        </div>
-        <p>${page.text}</p>
-        ${keywordPart}
-        ${finalLink}
-      `;
-    }
-
-    searchForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const query = normalize(searchInput.value);
-      if (!query) return;
-
-      const hitPages = pages.filter((p) =>
-        p.searchable &&
-        Array.isArray(p.searchTerms) &&
-        p.searchTerms.some((term) => normalize(term) === query)
-      );
-
-      if (hitPages.length === 0) {
-        viewerEl.innerHTML = `
-          <h3>検索結果: 0件</h3>
-          <p>一致する記録は見つかりませんでした。別のキーワードを試してください。</p>
-        `;
-        return;
-      }
-
-      for (const p of hitPages) {
-        discovered.add(p.id);
-      }
-
-      currentPageId = hitPages[0].id;
-      renderStatus();
-      renderList();
-      renderViewer();
-    });
-
-    renderStatus();
-    renderList();
-    renderViewer();
+    canvas.addEventListener("click", ev=>{ const r=canvas.getBoundingClientRect(), p={x:(ev.clientX-r.left)/r.width*900,y:(ev.clientY-r.top)/r.height*620}; const tower=state.towers.find(t=>dist(t,p)<30); if(tower){ const cost=Math.floor(tower.type.cost*Math.pow(1.9,tower.level)); if(state.money>=cost){ state.money-=cost; tower.level++; toast(`${tower.type.name} Lv${tower.level}!`); } else toast("キャンディ不足！"); return; } if(path.some(node=>dist(node,p)<48)){ toast("道には置けないよ"); return; } if(state.money>=selected.cost){ state.money-=selected.cost; state.towers.push({x:p.x,y:p.y,type:selected,level:1,cool:0}); pop(p.x,p.y,"ぽんっ",selected.color); } else toast("キャンディ不足！"); });
+    ui.start.onclick=startWave; ui.speed.onclick=()=>{ speed=speed===1?2:speed===2?4:1; ui.speed.textContent=`速度 x${speed}`; }; ui.reset.onclick=reset;
+    reset(); renderTowerCards(); requestAnimationFrame(loop);
   </script>
 </body>
 </html>
